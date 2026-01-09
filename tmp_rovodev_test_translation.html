@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Integration Test</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+        }
+        .success { border-left-color: #4caf50; }
+        .error { border-left-color: #f44336; }
+        .info { border-left-color: #2196f3; }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #5568d3; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌐 Translation Integration Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Backend Initialization</h2>
+        <button onclick="testInit()">Run Test</button>
+        <div id="test1Result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Basic Translation (Gemini 3.0 Pro)</h2>
+        <button onclick="testBasicTranslation()">Run Test</button>
+        <div id="test2Result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Dual-AI Comparison</h2>
+        <button onclick="testDualAI()">Run Test</button>
+        <div id="test3Result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Language List</h2>
+        <button onclick="testLanguageList()">Run Test</button>
+        <div id="test4Result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 5: Regulatory Response Writer Integration</h2>
+        <button onclick="testRegulatoryIntegration()">Run Test</button>
+        <div id="test5Result"></div>
+    </div>
+
+    <script src="regulatory-translation-backend.js"></script>
+    <script src="regulatory-response-writer.js"></script>
+    <script>
+        let translationBackend;
+
+        function showResult(elementId, message, type = 'info') {
+            const el = document.getElementById(elementId);
+            el.innerHTML += `<div class="result ${type}">${message}</div>`;
+        }
+
+        async function testInit() {
+            const resultId = 'test1Result';
+            document.getElementById(resultId).innerHTML = '';
+            
+            try {
+                showResult(resultId, '⏳ Initializing translation backend...', 'info');
+                
+                translationBackend = new RegulatoryTranslationBackend();
+                await translationBackend.initialize();
+                
+                showResult(resultId, '✅ Backend initialized successfully', 'success');
+                showResult(resultId, `📚 Supported languages: ${translationBackend.state.supportedLanguages.length}`, 'success');
+                showResult(resultId, `🤖 Available models: ${Object.keys(translationBackend.models).length}`, 'success');
+                
+                // Test model info
+                const geminiInfo = translationBackend.getModelInfo('gemini-3-pro-preview');
+                showResult(resultId, `Model: ${geminiInfo.name} - ${geminiInfo.description}`, 'info');
+                
+            } catch (error) {
+                showResult(resultId, '❌ Initialization failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testBasicTranslation() {
+            const resultId = 'test2Result';
+            document.getElementById(resultId).innerHTML = '';
+            
+            if (!translationBackend) {
+                showResult(resultId, '❌ Please run Test 1 first', 'error');
+                return;
+            }
+
+            try {
+                const testText = "This is a regulatory compliance notice. Please respond within 30 days.";
+                const targetLang = "Spanish";
+                
+                showResult(resultId, `⏳ Translating to ${targetLang}...`, 'info');
+                showResult(resultId, `Original: "${testText}"`, 'info');
+                
+                const translation = await translationBackend.translateText(
+                    testText,
+                    targetLang,
+                    {
+                        model: 'gemini-3-pro-preview',
+                        stream: false,
+                        context: 'regulatory'
+                    }
+                );
+                
+                showResult(resultId, '✅ Translation completed', 'success');
+                showResult(resultId, `<pre>${translation}</pre>`, 'success');
+                
+            } catch (error) {
+                showResult(resultId, '❌ Translation failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testDualAI() {
+            const resultId = 'test3Result';
+            document.getElementById(resultId).innerHTML = '';
+            
+            if (!translationBackend) {
+                showResult(resultId, '❌ Please run Test 1 first', 'error');
+                return;
+            }
+
+            try {
+                const testText = "We acknowledge receipt of your regulatory notice and will provide a comprehensive response.";
+                const targetLang = "French";
+                
+                showResult(resultId, `⏳ Dual-AI translation to ${targetLang}...`, 'info');
+                showResult(resultId, `Original: "${testText}"`, 'info');
+                
+                const result = await translationBackend.translateDualAI(
+                    testText,
+                    targetLang,
+                    { context: 'regulatory' }
+                );
+                
+                showResult(resultId, '✅ Dual-AI comparison completed', 'success');
+                
+                if (result.results['gemini-3-pro-preview']) {
+                    showResult(resultId, `<strong>🧠 Gemini 3.0 Pro:</strong><pre>${result.results['gemini-3-pro-preview']}</pre>`, 'success');
+                }
+                
+                if (result.results['claude-sonnet-4']) {
+                    showResult(resultId, `<strong>📝 Claude Sonnet 4.5:</strong><pre>${result.results['claude-sonnet-4']}</pre>`, 'success');
+                }
+                
+            } catch (error) {
+                showResult(resultId, '❌ Dual-AI translation failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testLanguageList() {
+            const resultId = 'test4Result';
+            document.getElementById(resultId).innerHTML = '';
+            
+            if (!translationBackend) {
+                showResult(resultId, '❌ Please run Test 1 first', 'error');
+                return;
+            }
+
+            try {
+                showResult(resultId, '⏳ Testing language queries...', 'info');
+                
+                // Test get all languages
+                const allLangs = translationBackend.state.supportedLanguages;
+                showResult(resultId, `✅ Total languages: ${allLangs.length}`, 'success');
+                
+                // Test get by region
+                const europeanLangs = translationBackend.getLanguagesByRegion('Europe');
+                showResult(resultId, `✅ European languages: ${europeanLangs.length}`, 'success');
+                
+                const asianLangs = translationBackend.getLanguagesByRegion('Asia');
+                showResult(resultId, `✅ Asian languages: ${asianLangs.length}`, 'success');
+                
+                // Test get specific language
+                const spanish = translationBackend.getLanguage('Spanish');
+                showResult(resultId, `✅ Found Spanish: ${spanish.name} (${spanish.native}) - Code: ${spanish.code}`, 'success');
+                
+                // Show sample languages
+                const samples = allLangs.slice(0, 10);
+                let langList = '<strong>Sample Languages:</strong><ul>';
+                for (const lang of samples) {
+                    langList += `<li>${lang.name} (${lang.native}) - ${lang.region}</li>`;
+                }
+                langList += '</ul>';
+                showResult(resultId, langList, 'info');
+                
+            } catch (error) {
+                showResult(resultId, '❌ Language list test failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testRegulatoryIntegration() {
+            const resultId = 'test5Result';
+            document.getElementById(resultId).innerHTML = '';
+            
+            try {
+                showResult(resultId, '⏳ Testing Regulatory Response Writer integration...', 'info');
+                
+                // Check if RegulatoryResponseWriter is loaded
+                if (!window.RegulatoryResponseWriter) {
+                    showResult(resultId, '❌ RegulatoryResponseWriter not found', 'error');
+                    return;
+                }
+                
+                showResult(resultId, '✅ RegulatoryResponseWriter loaded', 'success');
+                
+                // Check if translation backend is integrated
+                if (window.RegulatoryResponseWriter.translationBackend) {
+                    showResult(resultId, '✅ Translation backend integrated with RegulatoryResponseWriter', 'success');
+                } else {
+                    showResult(resultId, '⚠️ Translation backend not yet integrated (need to call init)', 'info');
+                }
+                
+                // Check if command handler exists
+                if (window.translateCommandHandler) {
+                    showResult(resultId, '✅ /translate command handler registered', 'success');
+                } else {
+                    showResult(resultId, '❌ /translate command handler not found', 'error');
+                }
+                
+                // Test translation methods exist
+                const methods = [
+                    'translateDocument',
+                    'translateDocumentDualAI',
+                    'listLanguages',
+                    'setTranslationModel',
+                    'showTranslateHelp'
+                ];
+                
+                let allMethodsExist = true;
+                for (const method of methods) {
+                    if (typeof window.RegulatoryResponseWriter[method] === 'function') {
+                        showResult(resultId, `✅ Method ${method}() exists`, 'success');
+                    } else {
+                        showResult(resultId, `❌ Method ${method}() missing`, 'error');
+                        allMethodsExist = false;
+                    }
+                }
+                
+                if (allMethodsExist) {
+                    showResult(resultId, '🎉 All integration tests passed!', 'success');
+                }
+                
+            } catch (error) {
+                showResult(resultId, '❌ Integration test failed: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

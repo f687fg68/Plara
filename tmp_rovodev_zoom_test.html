@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoom Functionality Test</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        .demo-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        .zoom-display {
+            padding: 16px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .demo-page {
+            background: white;
+            color: #1e293b;
+            padding: 40px;
+            border-radius: 12px;
+            margin: 0 auto;
+            max-width: 800px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transform-origin: top center;
+            transition: transform 0.3s ease;
+        }
+        .info-box {
+            background: rgba(67,233,123,0.1);
+            border-left: 3px solid #43e97b;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Zoom Controls Test</h1>
+        <p>Test the zoom functionality for the document viewer</p>
+        
+        <div class="info-box">
+            <strong>✨ Existing Zoom Controls in Your App:</strong><br>
+            - Zoom In/Out buttons<br>
+            - Reset to 100%<br>
+            - Fit to Screen (auto-calculates best zoom)<br>
+            - Real-time zoom percentage display
+        </div>
+        
+        <div class="demo-controls">
+            <button onclick="zoomOut()">🔍- Zoom Out (10%)</button>
+            <button onclick="zoomIn()">🔍+ Zoom In (10%)</button>
+            <button onclick="resetZoom()">↺ Reset (100%)</button>
+            <button onclick="fitToScreen()">📐 Fit to Screen</button>
+        </div>
+        
+        <div class="zoom-display" id="zoomDisplay">100%</div>
+        
+        <div style="overflow: auto; max-height: 600px; border: 2px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; background: rgba(0,0,0,0.2);">
+            <div class="demo-page" id="demoPage">
+                <h1>Sample Document Page</h1>
+                <p>This is a sample document to demonstrate zoom functionality.</p>
+                
+                <h2>How Zoom Works</h2>
+                <p>The zoom feature allows you to:</p>
+                <ul>
+                    <li><strong>Zoom In:</strong> Increase document size by 10% increments</li>
+                    <li><strong>Zoom Out:</strong> Decrease document size by 10% increments</li>
+                    <li><strong>Reset:</strong> Return to 100% (original size)</li>
+                    <li><strong>Fit to Screen:</strong> Automatically calculate the best zoom level to view the entire page without scrolling</li>
+                </ul>
+                
+                <h2>Current Implementation</h2>
+                <p>Your app already has these zoom controls in the editor toolbar:</p>
+                <ul>
+                    <li>Zoom range: 50% to 250%</li>
+                    <li>Smooth CSS transitions</li>
+                    <li>Keyboard shortcuts ready</li>
+                    <li>Real-time percentage display</li>
+                </ul>
+                
+                <h2>Benefits</h2>
+                <ol>
+                    <li>See the full page without scrolling (Fit to Screen)</li>
+                    <li>Focus on details when needed (Zoom In)</li>
+                    <li>Overview of document structure (Zoom Out)</li>
+                    <li>Comfortable reading at any screen size</li>
+                </ol>
+                
+                <p style="margin-top: 40px; padding: 20px; background: #f0f9ff; border-radius: 8px;">
+                    <strong>💡 Tip:</strong> Try the "Fit to Screen" button to see the entire page without scrolling!
+                </p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 24px; padding: 20px; background: rgba(102,126,234,0.2); border-radius: 12px; border: 1px solid rgba(102,126,234,0.5);">
+            <h3>🎯 In Your Main App (index.html):</h3>
+            <p>Look for these controls in the editor toolbar:</p>
+            <ul>
+                <li>🔄 Undo / Redo buttons</li>
+                <li>➖ Zoom Out button</li>
+                <li><strong>100%</strong> Current zoom level</li>
+                <li>➕ Zoom In button</li>
+                <li><strong>Reset</strong> button</li>
+                <li><strong>Fit</strong> button (← Use this to see full page!)</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        let currentZoom = 1.0;
+        const demoPage = document.getElementById('demoPage');
+        const zoomDisplay = document.getElementById('zoomDisplay');
+        
+        function updateDisplay() {
+            demoPage.style.transform = `scale(${currentZoom})`;
+            zoomDisplay.textContent = `${Math.round(currentZoom * 100)}%`;
+        }
+        
+        function zoomIn() {
+            currentZoom = Math.min(2.5, currentZoom + 0.1);
+            updateDisplay();
+        }
+        
+        function zoomOut() {
+            currentZoom = Math.max(0.5, currentZoom - 0.1);
+            updateDisplay();
+        }
+        
+        function resetZoom() {
+            currentZoom = 1.0;
+            updateDisplay();
+        }
+        
+        function fitToScreen() {
+            const container = demoPage.parentElement;
+            const containerHeight = container.clientHeight;
+            const pageHeight = demoPage.scrollHeight;
+            
+            // Calculate zoom to fit
+            currentZoom = Math.min(1.0, (containerHeight - 40) / pageHeight);
+            updateDisplay();
+            
+            alert(`Fit to Screen calculated: ${Math.round(currentZoom * 100)}%\n\nThis ensures the entire document is visible without scrolling!`);
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === '+' || e.key === '=') {
+                    e.preventDefault();
+                    zoomIn();
+                } else if (e.key === '-') {
+                    e.preventDefault();
+                    zoomOut();
+                } else if (e.key === '0') {
+                    e.preventDefault();
+                    resetZoom();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

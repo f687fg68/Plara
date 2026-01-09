@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PriorAuthGuard Demo - Plara</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <a href="index.html" class="back-button">← Back to App</a>
+  <main style="max-width:980px;margin:24px auto;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;">
+    <h1>PriorAuthGuard AI - Quick Demo</h1>
+    <p>Use the buttons below to auto-fill common scenarios, then open the Plara chat and run <code>/prior-auth start</code>.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+      <button id="demo1" class="primary-btn">Spinal Fusion - CO-197 (UHC)</button>
+      <button id="demo2" class="primary-btn">Ozempic - Step Therapy (Aetna)</button>
+    </div>
+
+    <section style="margin-top:24px;">
+      <h2>Editor</h2>
+      <div id="editorRoot" style="min-height:240px;border:1px dashed #cbd5e1;padding:12px;border-radius:8px;"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    // Quick helper to ensure editor exists
+    (async function ensureEditor() {
+      if (!window.editorjs) {
+        try {
+          const blocks = [
+            { type: 'header', data: { text: 'PriorAuthGuard Demo', level: 2 } },
+            { type: 'paragraph', data: { text: 'Open chat and type /prior-auth start to launch the wizard.' } }
+          ];
+          // Use Notion chat area as target host
+          // Fallback: append simple text
+          document.getElementById('editorRoot').innerHTML = '<p>Ready. Use the buttons to insert demo rationale.</p>';
+        } catch (e) { console.warn(e); }
+      }
+    })();
+
+    function fillDemo(data){
+      const { authID, proc, payer, icd, cpt, code, rationale, logic } = data;
+      // Insert a preface in chat via Notion-like message
+      appendNotionMessage({
+        role: 'assistant',
+        content: `\n<div style="border:1px solid #e5e7eb;padding:12px;border-radius:8px;">\n<strong>🔧 Demo Prefill</strong><br/>\nAuth: ${authID} | Proc: ${proc} | Payer: ${payer} | ICD: ${icd} | CPT: ${cpt} | Code: ${code} | Logic: ${logic}<br/>\n<p style="margin-top:8px;"><em>Paste this into the wizard fields after running <code>/prior-auth start</code>.</em></p>\n<pre style="white-space:pre-wrap;background:#f9fafb;padding:8px;border-radius:6px;">${rationale}</pre>\n</div>`
+      });
+    }
+
+    document.getElementById('demo1').addEventListener('click', () => fillDemo({
+      authID: 'PA-77123',
+      proc: 'Lumbar Spinal Fusion (L4-L5)',
+      payer: 'uhc', icd: 'M43.16', cpt: '22558', code: 'CO-197', logic: 'clinical',
+      rationale: 'Patient completed 8 weeks PT (Sep 1–Oct 26), pain 8/10 persistent, Oswestry 54%. MRI shows severe foraminal stenosis L4-L5. NSAIDs failed; epidural provided temporary relief only. Urgent surgical timing due to progressive neuro deficits.'
+    }));
+
+    document.getElementById('demo2').addEventListener('click', () => fillDemo({
+      authID: 'PA-88902',
+      proc: 'Semaglutide (Ozempic) for T2DM',
+      payer: 'aetna', icd: 'E11.65', cpt: 'J3490', code: 'PR-50', logic: 'exception',
+      rationale: 'Metformin intolerance (GI), SGLT2 inhibitor caused recurrent UTIs; patient A1C 9.2% despite lifestyle program 6 months. High ASCVD risk. Request exception to step therapy citing intolerance and risk.'
+    }));
+  </script>
+</body>
+</html>

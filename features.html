@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Features - Plara</title>
+    <meta name="description" content="Explore Plara's intelligent AI features and tools">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+        <a href="index.html" class="logo">
+            <span class="logo-dots">⁝</span>
+            <span class="logo-text-main">Plara</span>
+        </a>
+    </nav>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Glassmorphism Sidebar (Shared) -->
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="help.html" class="nav-link">Help</a></li>
+                <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+                <li><a href="features.html" class="nav-link active">🤖 Features</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="auth-section">
+                <span class="auth-status">Not signed in</span>
+                <button class="btn-signin" id="signinBtn">Sign in</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <header class="hero-section"
+            style="text-align: center; margin-bottom: var(--spacing-3xl); animation: fadeInUp 0.8s ease-out;">
+            <h1 class="hero-title" style="margin-bottom: var(--spacing-md);">AI Intelligence Suite</h1>
+            <p style="font-size: 1.25rem; color: var(--color-text-secondary); max-width: 700px; margin: 0 auto;">
+                15+ Specialized AI Tools Powered by Gemini 3.0 Pro & Claude Sonnet 4.5
+            </p>
+
+            <div
+                style="display: flex; justify-content: center; gap: var(--spacing-2xl); margin-top: var(--spacing-2xl);">
+                <div style="text-align: center;">
+                    <span
+                        style="display: block; font-size: 2.5rem; font-weight: 700; color: var(--color-text-primary);">15+</span>
+                    <span
+                        style="font-size: 0.875rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em;">AI
+                        Tools</span>
+                </div>
+                <div style="text-align: center;">
+                    <span
+                        style="display: block; font-size: 2.5rem; font-weight: 700; color: var(--color-text-primary);">2</span>
+                    <span
+                        style="font-size: 0.875rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Models</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Sections -->
+        <div style="width: 100%; max-width: 1000px;">
+
+            <!-- Legal & Compliance -->
+            <section style="margin-bottom: var(--spacing-3xl);">
+                <div
+                    style="margin-bottom: var(--spacing-xl); display: flex; align-items: center; gap: var(--spacing-md);">
+                    <span style="font-size: 2rem;">⚖️</span>
+                    <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--color-text-primary);">Legal &
+                        Compliance</h2>
+                </div>
+
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-xl);">
+                    <!-- Regulatory Response -->
+                    <article class="input-box" onclick="showAgentHelp('regulatory')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">📋</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">Regulatory
+                            Response Writer</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Bureaucratic Navigator that turns high-stakes government notices into professional response
+                            drafts.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /regulatory
+                        </div>
+                    </article>
+
+                    <!-- Legal Discovery -->
+                    <article class="input-box" onclick="showAgentHelp('discovery')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">⚖️</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">Discovery
+                            Response Generator</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Digital Litigation Associate that drafts structured, legally-defensible responses with
+                            automatic Bates citations.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /discovery
+                        </div>
+                    </article>
+
+                    <!-- PatentGuard -->
+                    <article class="input-box" onclick="showAgentHelp('patent')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🔬</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">PatentGuard
+                            AI</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Technical Patent Advocate that drafts structured, jurisdiction-aware rebuttals proving
+                            novelty.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /patent
+                        </div>
+                    </article>
+
+                    <!-- MortgageGuard -->
+                    <article class="input-box" onclick="showAgentHelp('mortgage')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🏠</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">
+                            MortgageGuard AI</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Lender Compliance Specialist handling complex mortgage stipulations and regulatory
+                            responses.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /mortgage
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Healthcare -->
+            <section style="margin-bottom: var(--spacing-3xl);">
+                <div
+                    style="margin-bottom: var(--spacing-xl); display: flex; align-items: center; gap: var(--spacing-md);">
+                    <span style="font-size: 2rem;">🏥</span>
+                    <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--color-text-primary);">Healthcare</h2>
+                </div>
+
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-xl);">
+                    <article class="input-box" onclick="showAgentHelp('health-b2b')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">denial</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">
+                            Denial/Appeal Response</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Revenue Recovery Specialist that transforms ERA denial codes into appeals.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /health
+                        </div>
+                    </article>
+
+                    <article class="input-box" onclick="showAgentHelp('prior-auth')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">📋</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">
+                            PriorAuthGuard AI</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Eliminates Administrative Stalling by generating instant rebuttals when PAs are denied.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /prior-auth
+                        </div>
+                    </article>
+
+                    <article class="input-box" onclick="showAgentHelp('patient')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">⚕️</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">Patient
+                            Portal Assistant</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Clinical Co-pilot that drafts empathetic, medically accurate responses to patient messages.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /patient
+                        </div>
+                    </article>
+
+                    <article class="input-box" onclick="showAgentHelp('insurance')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🚑</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">AI Insurance
+                            Claim</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Handles complex property and casualty insurance claim responses and negotiations.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /insurance
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Business & Operations -->
+            <section style="margin-bottom: var(--spacing-3xl);">
+                <div
+                    style="margin-bottom: var(--spacing-xl); display: flex; align-items: center; gap: var(--spacing-md);">
+                    <span style="font-size: 2rem;">💼</span>
+                    <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--color-text-primary);">Business &
+                        Operations</h2>
+                </div>
+
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-xl);">
+                    <article class="input-box" onclick="showAgentHelp('pushback')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🛡️</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">Vendor
+                            Pushback</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Digital Procurement Negotiator that helps you say "No" professionally to price hikes.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /pushback
+                        </div>
+                    </article>
+
+                    <article class="input-box" onclick="showAgentHelp('rfp')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🏛️</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">Government
+                            RFP Writer</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Strategic Capture Manager that automates the heavy lifting of government bidding.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /rfp
+                        </div>
+                    </article>
+
+                    <article class="input-box" onclick="showAgentHelp('exec')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">✒️</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">Executive
+                            Ghostwriter</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Digital Chief of Staff that nuances tone for high-stakes C-Suite communications.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /exec
+                        </div>
+                    </article>
+
+                    <article class="input-box" onclick="showAgentHelp('churn')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🔄</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">ChurnGuard
+                            AI</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Customer Success Engine that detects at-risk accounts and drafts retention strategies.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /churn
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Safety & Discourse -->
+            <section style="margin-bottom: var(--spacing-3xl);">
+                <div
+                    style="margin-bottom: var(--spacing-xl); display: flex; align-items: center; gap: var(--spacing-md);">
+                    <span style="font-size: 2rem;">🤝</span>
+                    <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--color-text-primary);">Safety &
+                        Discourse</h2>
+                </div>
+
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-xl);">
+                    <article class="input-box" onclick="showAgentHelp('safe')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🛡️</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">SafeSpace AI
+                        </h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Harassment de-escalation tool that drafts firm boundaries for toxic communications.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /safe
+                        </div>
+                    </article>
+
+                    <article class="input-box" onclick="showAgentHelp('scam')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🎣</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">ScamBaiter
+                            Pro</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Automated time-wasting engine that engages scammers to keep them away from victims.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /scam
+                        </div>
+                    </article>
+
+                    <article class="input-box" onclick="showAgentHelp('civil')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🗣️</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">CivilReply
+                        </h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Constructive Discourse Generator that de-polarizes online political arguments.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /civil
+                        </div>
+                    </article>
+
+                    <article class="input-box" onclick="showAgentHelp('dispute')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">💳</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">
+                            DisputeShield AI</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Chargeback & Dispute Response Writer for merchants fighting fraud.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /dispute
+                        </div>
+                    </article>
+                    <article class="input-box" onclick="showAgentHelp('appeal')"
+                        style="padding: var(--spacing-xl); display: flex; flex-direction: column; height: 100%;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">🎓</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-sm);">AppealGuard
+                            AI</h3>
+                        <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); flex-grow: 1;">
+                            Academic Appeal Response Writer for students navigating university bureaucracy.
+                        </p>
+                        <div
+                            style="background: var(--color-bg-subtle); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); width: fit-content; font-family: monospace; font-size: 0.9rem; color: var(--color-accent-dark);">
+                            /appeal
+                        </div>
+                    </article>
+
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Agent Help Modal -->
+        <div id="agentHelpModal" class="agent-help-modal">
+            <div class="agent-help-overlay" onclick="closeAgentHelp()"></div>
+            <div class="agent-help-container">
+                <div class="agent-help-header">
+                    <div class="agent-help-title-group">
+                        <div id="helpIcon" class="agent-help-icon">🤖</div>
+                        <h3 id="helpTitle" class="agent-help-title">Agent Help</h3>
+                    </div>
+                    <button class="agent-help-close" onclick="closeAgentHelp()">✕</button>
+                </div>
+                <div class="agent-help-body" id="helpBody">
+                    <!-- Content injected dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <script src="agent-help-data.js"></script>
+        <script src="app.js"></script>
+        <script>
+            function showAgentHelp(agentId) {
+                const data = AGENT_HELP_DATA[agentId];
+                if (!data) return;
+
+                document.getElementById('helpIcon').textContent = data.icon;
+                document.getElementById('helpTitle').textContent = data.title;
+
+                let html = `
+                <div class="help-section">
+                    <h4>Summary</h4>
+                    <p>${data.summary}</p>
+                </div>
+                <div class="help-section">
+                    <h4>The Problem</h4>
+                    <p>${data.problem}</p>
+                </div>
+                <div class="help-section">
+                    <h4>The Solution</h4>
+                    <p>${data.solution}</p>
+                </div>
+                <div class="help-section">
+                    <h4>How to Use This AI Agent</h4>
+                    <div class="help-steps">
+                        ${data.steps.map(step => `
+                            <div class="help-step-card">
+                                <h5>${step.title}</h5>
+                                <p>${step.content}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="help-section">
+                    <h4>Market Position</h4>
+                    <div class="market-badge">${data.market}</div>
+                </div>
+            `;
+
+                document.getElementById('helpBody').innerHTML = html;
+                document.getElementById('agentHelpModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeAgentHelp() {
+                document.getElementById('agentHelpModal').classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+
+            // Close on ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeAgentHelp();
+            });
+        </script>
+</body>
+
+</html>

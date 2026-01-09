@@ -1,0 +1,210 @@
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  🐻‍❄️  POLAR.SH QUICK REFERENCE CARD                     │
+│                     Keep this handy while developing!                   │
+└─────────────────────────────────────────────────────────────────────────┘
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 🚀 START DEVELOPMENT                                                      ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Terminal 1 (Backend):        cd backend && python3 main.py
+Terminal 2 (Frontend):       npm run dev
+Terminal 3 (Webhooks):       ngrok http 8000
+
+Backend URL:                 http://localhost:8000
+Frontend URL:                http://localhost:5173
+Test Page:                   http://localhost:5173/tmp_rovodev_polar_demo.html
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 🔑 CREDENTIALS                                                            ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Get Token:                   https://sandbox.polar.sh/settings/api
+Dashboard:                   https://sandbox.polar.sh/dashboard
+Config File:                 backend/.env
+
+Required in .env:
+  POLAR_ACCESS_TOKEN=polar_pat_xxxxx
+  POLAR_ORGANIZATION_ID=org_xxxxx
+  POLAR_WEBHOOK_SECRET=whsec_xxxxx
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 💳 TEST CARD                                                              ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Card Number:                 4242 4242 4242 4242
+Expiry:                      12/25 (any future date)
+CVC:                         123 (any 3 digits)
+Name:                        Any name
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 📡 API ENDPOINTS                                                          ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Health Check:                GET  /
+Products:                    GET  /api/products
+Create Checkout:             POST /api/checkout
+Checkout Status:             GET  /api/checkout/{id}
+Webhooks:                    POST /api/webhooks/polar
+Customer Orders:             GET  /api/orders/{email}
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 🧪 TESTING                                                                ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Test Backend:                curl http://localhost:8000/
+Test Products:               curl http://localhost:8000/api/products
+Demo Page:                   http://localhost:5173/tmp_rovodev_polar_demo.html
+Verify Setup:                ./verify_polar_integration.sh
+Pricing Page:                http://localhost:5173/pricing.html
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 📁 KEY FILES                                                              ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Backend:                     backend/main.py
+Frontend:                    src/polar-checkout.js
+Pricing:                     pricing.html
+Success:                     success.html
+Config:                      backend/.env
+Demo:                        tmp_rovodev_polar_demo.html
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 🎨 FRONTEND USAGE                                                         ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Import:
+  import { PolarCheckout } from './src/polar-checkout.js';
+
+Initialize:
+  const polar = new PolarCheckout({ apiBase: '/api' });
+
+Checkout:
+  await polar.checkout('prod_xxxxx');
+
+Get Products:
+  const products = await polar.getProducts();
+
+Render Products:
+  polar.renderProducts(container, products);
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 🔧 COMMON COMMANDS                                                        ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Install Backend:             cd backend && pip install -r requirements.txt
+Install Frontend:            npm install
+Build Frontend:              npm run build
+Check Python:                python3 --version
+Check Node:                  node --version
+Check Services:              curl http://localhost:8000/
+
+Kill Port 8000:              lsof -i :8000 | awk 'NR!=1 {print $2}' | xargs kill
+Kill Port 5173:              lsof -i :5173 | awk 'NR!=1 {print $2}' | xargs kill
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 🐛 TROUBLESHOOTING                                                        ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+"Failed to create checkout"     → Check POLAR_ACCESS_TOKEN in .env
+"Products not loading"           → Check POLAR_ORGANIZATION_ID in .env
+"CORS error"                     → Backend must be on port 8000
+"Webhook not working"            → Use ngrok for local testing
+"Port already in use"            → Kill the process (see commands above)
+Backend won't start              → Check Python version (need 3.8+)
+Frontend won't start             → Check Node version (need 16+)
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 📚 DOCUMENTATION                                                          ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Start Here:                  START_HERE_POLAR.md
+Quick Start:                 POLAR_QUICKSTART.md
+Cheat Sheet:                 POLAR_CHEATSHEET.md
+Checklist:                   POLAR_SETUP_CHECKLIST.md
+Complete:                    POLAR_INTEGRATION_COMPLETE.md
+Overview:                    README_POLAR_INTEGRATION.md
+Summary:                     POLAR_INTEGRATION_SUMMARY.md
+Flow Diagram:                POLAR_VISUAL_FLOW.txt
+Index:                       POLAR_DOCS_INDEX.md
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 🪝 WEBHOOK EVENTS                                                         ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+order.created                Payment successful! ✅
+subscription.created         Subscription started 🎉
+subscription.updated         Subscription changed 🔄
+subscription.canceled        Subscription ended ❌
+checkout.created             Checkout initiated 🛒
+checkout.updated             Checkout status changed 📊
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 🚀 DEPLOYMENT                                                             ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Before Production:
+  □ Change ENVIRONMENT=production in .env
+  □ Use production Polar API token
+  □ Deploy backend with HTTPS
+  □ Deploy frontend
+  □ Update webhook URL in Polar
+  □ Test with real payment
+
+Backend Hosting:             Railway, Render, Fly.io, DigitalOcean
+Frontend Hosting:            Vercel, Netlify, Cloudflare Pages
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ ✅ SUCCESS CHECKLIST                                                      ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+□ Backend returns "healthy" at http://localhost:8000/
+□ Frontend loads at http://localhost:5173/
+□ Demo page shows "Backend: Online" (green)
+□ Demo page shows "Products: X Found" (green)
+□ Pricing page loads correctly
+□ Checkout redirects to Polar
+□ Test payment completes
+□ Success page loads
+□ Backend logs show webhook received
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 🆘 HELP                                                                   ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+Check Logs:                  Terminal 1 (backend) + Browser Console (F12)
+Run Verification:            ./verify_polar_integration.sh
+Polar Discord:               https://discord.gg/polar
+Polar Docs:                  https://docs.polar.sh
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ 💡 PRO TIPS                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+• Keep backend terminal visible to see webhook events in real-time
+• Use demo page for quick integration status checks
+• Bookmark POLAR_CHEATSHEET.md for daily reference
+• Start with sandbox mode (no real money)
+• Use ngrok for local webhook testing
+• Check backend logs when debugging issues
+• Test with Polar's test card: 4242 4242 4242 4242
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║ ⏱️  TIMINGS                                                                ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+First-time Setup:            15 minutes
+Quick Start:                 5 minutes
+Test Payment:                2 minutes
+Production Deploy:           30 minutes
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  💰 Time from zero to first payment: ~5 minutes                         │
+│  🚀 Time from zero to production:    ~1 hour                            │
+└─────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════
+
+📌 PRINT THIS CARD AND KEEP IT NEAR YOUR DESK! 📌
+
+═══════════════════════════════════════════════════════════════════════════

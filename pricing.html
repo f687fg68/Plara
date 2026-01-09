@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - Plara</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+        <a href="index.html" class="logo">
+            <span class="logo-dots">⁝</span>
+            <span class="logo-text-main">Plara</span>
+        </a>
+    </nav>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="help.html" class="nav-link">Help</a></li>
+                <li><a href="pricing.html" class="nav-link active">Pricing</a></li>
+                <li><a href="features.html" class="nav-link">🤖 Features</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="auth-section">
+                <span class="auth-status">Not signed in</span>
+                <button class="btn-signin" id="signinBtn">Sign in</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <div style="text-align: center; margin-bottom: var(--spacing-3xl); animation: fadeInUp 0.8s ease-out;">
+            <h1 class="hero-title" style="margin-bottom: var(--spacing-md);">Simple, Transparent Pricing</h1>
+            <p style="font-size: 1.25rem; color: var(--color-text-secondary); max-width: 600px; margin: 0 auto;">
+                Start for free, upgrade as you grow. No hidden fees.
+            </p>
+        </div>
+
+        <!-- Pricing Grid -->
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-xl); width: 100%; max-width: 800px;">
+
+            <!-- Monthly Plan -->
+            <div class="input-box"
+                style="padding: var(--spacing-2xl); display: flex; flex-direction: column; text-align: center;">
+                <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: var(--spacing-sm);">Monthly</h3>
+                <div
+                    style="font-size: 3rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: var(--spacing-xl);">
+                    $20<span style="font-size: 1rem; color: var(--color-text-secondary); font-weight: 400;">/mo</span>
+                </div>
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-2xl);">
+                    Perfect for flexible month-to-month access.
+                </p>
+                <ul style="text-align: left; list-style: none; margin-bottom: var(--spacing-2xl); flex-grow: 1;">
+                    <li style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--color-success);">✓</span> Unlimited AI Requests
+                    </li>
+                    <li style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--color-success);">✓</span> Priority Support
+                    </li>
+                    <li style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--color-success);">✓</span> Gemini 3.0 Pro & Claude 4.5
+                    </li>
+                    <li style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--color-success);">✓</span> Advanced Document Analysis
+                    </li>
+                    <li style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--color-success);">✓</span> Cancel anytime
+                    </li>
+                </ul>
+                <button class="btn-signin" data-plan="monthly"
+                    data-product-id="232d3096-2985-4332-a6f2-46a9739e720e">Get Monthly Plan</button>
+            </div>
+
+            <!-- Yearly Plan -->
+            <div class="input-box"
+                style="padding: var(--spacing-2xl); display: flex; flex-direction: column; text-align: center; border-color: var(--color-accent); box-shadow: var(--shadow-md);">
+                <div
+                    style="background: var(--color-accent); color: white; padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 600; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);">
+                    BEST VALUE
+                </div>
+                <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: var(--spacing-sm);">Yearly</h3>
+                <div
+                    style="font-size: 3rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: var(--spacing-xl);">
+                    $50<span style="font-size: 1rem; color: var(--color-text-secondary); font-weight: 400;">/yr</span>
+                </div>
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-2xl);">
+                    Save 79% with annual billing.
+                </p>
+                <ul style="text-align: left; list-style: none; margin-bottom: var(--spacing-2xl); flex-grow: 1;">
+                    <li style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--color-accent);">✓</span> Unlimited AI Requests
+                    </li>
+                    <li style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--color-accent);">✓</span> Priority Support
+                    </li>
+                    <li style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--color-accent);">✓</span> Gemini 3.0 Pro & Claude 4.5
+                    </li>
+                    <li style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--color-accent);">✓</span> Advanced Document Analysis
+                    </li>
+                    <li style="margin-bottom: var(--spacing-md); display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--color-accent);">✓</span> Save $190/year
+                    </li>
+                </ul>
+                <button class="btn-signin" data-plan="yearly" data-product-id="47deaa9b-6627-4716-8189-840a814c1eb3">Get
+                    Yearly Plan</button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        // Polar checkout via backend API
+        const PRODUCTS = {
+            monthly: '232d3096-2985-4332-a6f2-46a9739e720e',
+            yearly: '47deaa9b-6627-4716-8189-840a814c1eb3'
+        };
+
+        async function checkout(productId, buttonElement, planName) {
+            buttonElement.disabled = true;
+            buttonElement.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite;"></span> Processing...';
+
+            try {
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_id: productId })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Checkout failed');
+                }
+
+                const data = await response.json();
+                window.location.href = data.checkout_url;
+
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert('Checkout failed: ' + error.message + '\n\nMake sure the backend server is running.');
+                buttonElement.disabled = false;
+                buttonElement.textContent = `Get ${planName} Plan`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const monthlyBtn = document.querySelector('[data-plan="monthly"]');
+            const yearlyBtn = document.querySelector('[data-plan="yearly"]');
+
+            if (monthlyBtn) {
+                monthlyBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.href = "https://buy.polar.sh/polar_cl_YpDfHs5oQjBv37T8Mp7X2IaNGxUSY5TUBICiR1aaCFM";
+                });
+            }
+
+            if (yearlyBtn) {
+                yearlyBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.href = "https://buy.polar.sh/polar_cl_qvXJpJwo7p4Gn2qhHoryW93zCpoojE8sXGkNl1zQflA";
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

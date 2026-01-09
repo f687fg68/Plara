@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DenialAI Pro - Quick Test Demo</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0a0f1a;
+            color: #f8fafc;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #111827;
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #334155;
+        }
+        h1 {
+            background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+        button {
+            background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: translateY(-2px); }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #output {
+            margin-top: 30px;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        .info { color: #06b6d4; }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #334155;
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 DenialAI Pro - Quick Test Demo</h1>
+        <p class="subtitle">Test the complete integration: Puter.js + Gemini 3.0 Pro + Claude Sonnet 4.5</p>
+
+        <div>
+            <button onclick="testPuterConnection()">1. Test Puter.js Connection</button>
+            <button onclick="testGeminiAI()">2. Test Gemini 3.0 Pro</button>
+            <button onclick="testClaudeAI()">3. Test Claude Sonnet 4.5</button>
+            <button onclick="testFullGeneration()">4. Generate Sample Letter</button>
+            <button onclick="testStorage()">5. Test Cloud Storage</button>
+            <button onclick="clearOutput()">Clear Output</button>
+        </div>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        const output = document.getElementById('output');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            output.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            output.innerHTML = '';
+        }
+
+        async function testPuterConnection() {
+            log('Testing Puter.js connection...', 'info');
+            
+            try {
+                if (!window.puter) {
+                    throw new Error('Puter.js not loaded');
+                }
+                
+                log('✅ Puter.js loaded successfully', 'success');
+                log('Available APIs: ' + Object.keys(puter).join(', '), 'info');
+                
+                // Test auth
+                const isSignedIn = puter.auth?.isSignedIn?.();
+                if (isSignedIn) {
+                    const user = await puter.auth.getUser();
+                    log('✅ Authenticated as: ' + user.username, 'success');
+                } else {
+                    log('⚠️ Not signed in - will prompt when needed', 'info');
+                }
+                
+            } catch (error) {
+                log('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function testGeminiAI() {
+            log('Testing Gemini 3.0 Pro (gemini-2.0-flash-exp)...', 'info');
+            
+            try {
+                if (!puter.ai) {
+                    throw new Error('Puter AI not available');
+                }
+                
+                const prompt = 'Generate a brief, professional greeting for a mortgage compliance officer.';
+                log('Sending prompt to Gemini...', 'info');
+                
+                const response = await puter.ai.chat(prompt, {
+                    model: 'gemini-2.0-flash-exp',
+                    stream: false
+                });
+                
+                log('✅ Gemini Response:', 'success');
+                log(response, 'info');
+                
+            } catch (error) {
+                log('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function testClaudeAI() {
+            log('Testing Claude Sonnet 4.5 (claude-sonnet-4)...', 'info');
+            
+            try {
+                if (!puter.ai) {
+                    throw new Error('Puter AI not available');
+                }
+                
+                const prompt = 'Explain FCRA Section 615(a) in one sentence.';
+                log('Sending prompt to Claude...', 'info');
+                
+                const response = await puter.ai.chat(prompt, {
+                    model: 'claude-sonnet-4',
+                    stream: false
+                });
+                
+                log('✅ Claude Response:', 'success');
+                log(response, 'info');
+                
+            } catch (error) {
+                log('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function testFullGeneration() {
+            log('Generating sample mortgage denial letter...', 'info');
+            
+            try {
+                const sampleData = {
+                    applicationId: 'APP-2025-DEMO001',
+                    applicantName: 'John Smith',
+                    loanAmount: 350000,
+                    state: 'Illinois',
+                    denialReason: 'Debt-to-income ratio exceeds guidelines'
+                };
+                
+                log('Application: ' + sampleData.applicationId, 'info');
+                log('Applicant: ' + sampleData.applicantName, 'info');
+                log('Using Gemini 3.0 Pro for generation...', 'info');
+                
+                const prompt = `Generate a brief mortgage denial letter for:
+- Application ID: ${sampleData.applicationId}
+- Applicant: ${sampleData.applicantName}
+- Loan Amount: $${sampleData.loanAmount.toLocaleString()}
+- State: ${sampleData.state}
+- Denial Reason: ${sampleData.denialReason}
+
+Include FCRA/ECOA compliance. Keep it under 300 words.`;
+                
+                let fullResponse = '';
+                const stream = await puter.ai.chat(prompt, {
+                    model: 'gemini-2.0-flash-exp',
+                    stream: true
+                });
+                
+                log('🤖 Streaming response...', 'info');
+                output.innerHTML += '\n--- GENERATED LETTER ---\n';
+                
+                for await (const chunk of stream) {
+                    if (chunk?.text) {
+                        fullResponse += chunk.text;
+                        output.innerHTML += chunk.text;
+                        output.scrollTop = output.scrollHeight;
+                    }
+                }
+                
+                output.innerHTML += '\n--- END OF LETTER ---\n\n';
+                log('✅ Letter generated successfully!', 'success');
+                log('Length: ' + fullResponse.length + ' characters', 'info');
+                
+            } catch (error) {
+                log('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        async function testStorage() {
+            log('Testing Puter.js cloud storage...', 'info');
+            
+            try {
+                const testData = {
+                    id: 'test_' + Date.now(),
+                    message: 'DenialAI Pro test data',
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Test KV store
+                log('Writing to KV store...', 'info');
+                await puter.kv.set('denialai_test', JSON.stringify(testData));
+                log('✅ Data written to KV store', 'success');
+                
+                // Read back
+                log('Reading from KV store...', 'info');
+                const retrieved = await puter.kv.get('denialai_test');
+                const parsed = JSON.parse(retrieved);
+                log('✅ Data retrieved: ' + parsed.message, 'success');
+                
+                // Test file system (optional)
+                try {
+                    log('Testing file system...', 'info');
+                    await puter.fs.write('denialai_test.json', JSON.stringify(testData, null, 2));
+                    log('✅ File written successfully', 'success');
+                } catch (fsError) {
+                    log('⚠️ File system: ' + fsError.message + ' (may need permissions)', 'info');
+                }
+                
+                log('✅ Storage tests completed!', 'success');
+                
+            } catch (error) {
+                log('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        // Auto-run first test on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('DenialAI Pro Demo Ready!', 'success');
+                log('Click buttons above to test each component.', 'info');
+                log('', 'info');
+                testPuterConnection();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

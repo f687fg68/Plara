@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PuterFS Integration Test</title>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: rgba(255,255,255,0.1);
+            padding: 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        button { 
+            margin: 8px; 
+            padding: 10px 20px; 
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover { background: rgba(255,255,255,0.3); }
+        .test-result { 
+            margin: 12px 0; 
+            padding: 12px; 
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .success { border-left: 4px solid #10b981; }
+        .error { border-left: 4px solid #ef4444; }
+        .info { border-left: 4px solid #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 PuterFS Integration Test Suite</h1>
+        <p>Testing Puter.js File System integration for Plara</p>
+        
+        <div style="margin: 20px 0;">
+            <button onclick="testInit()">1. Test Initialization</button>
+            <button onclick="testWrite()">2. Test Write File</button>
+            <button onclick="testRead()">3. Test Read File</button>
+            <button onclick="testMkdir()">4. Test Create Directory</button>
+            <button onclick="testList()">5. Test List Files</button>
+            <button onclick="testSaveDoc()">6. Test Save Document</button>
+            <button onclick="testListDocs()">7. Test List Documents</button>
+            <button onclick="testStats()">8. Test Storage Stats</button>
+            <button onclick="runAllTests()">▶️ Run All Tests</button>
+        </div>
+        
+        <div id="testResults"></div>
+    </div>
+    
+    <script src="https://js.puter.com/v2/"></script>
+    <script src="puter-fs-integration.js"></script>
+    
+    <script>
+        const resultsDiv = document.getElementById('testResults');
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            resultsDiv.appendChild(div);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+        
+        function clearResults() {
+            resultsDiv.innerHTML = '';
+        }
+        
+        async function testInit() {
+            clearResults();
+            log('Testing PuterFS initialization...', 'info');
+            
+            try {
+                if (window.puterFS && window.puterFS.isInitialized) {
+                    log('✅ PuterFS is initialized', 'success');
+                    log(`Config: ${JSON.stringify(window.puterFS.config, null, 2)}`, 'info');
+                } else {
+                    log('⚠️ PuterFS not initialized yet, waiting...', 'info');
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    if (window.puterFS && window.puterFS.isInitialized) {
+                        log('✅ PuterFS is now initialized', 'success');
+                    } else {
+                        log('❌ PuterFS initialization failed', 'error');
+                    }
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testWrite() {
+            log('Testing file write...', 'info');
+            
+            try {
+                const testData = `Test file created at ${new Date().toISOString()}`;
+                const result = await window.puterFS.writeFile('test_file.txt', testData);
+                log(`✅ File written: ${result.name} (${result.size} bytes)`, 'success');
+                log(`Path: ${result.path}`, 'info');
+            } catch (error) {
+                log(`❌ Write failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testRead() {
+            log('Testing file read...', 'info');
+            
+            try {
+                const content = await window.puterFS.readFileAsText('test_file.txt');
+                log(`✅ File read successfully`, 'success');
+                log(`Content: ${content}`, 'info');
+            } catch (error) {
+                log(`❌ Read failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testMkdir() {
+            log('Testing directory creation...', 'info');
+            
+            try {
+                const result = await window.puterFS.createDirectory('test_directory');
+                log(`✅ Directory created: ${result.name}`, 'success');
+                log(`Path: ${result.path}`, 'info');
+            } catch (error) {
+                log(`❌ Mkdir failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testList() {
+            log('Testing directory listing...', 'info');
+            
+            try {
+                const items = await window.puterFS.listDirectory('./');
+                log(`✅ Found ${items.length} items`, 'success');
+                items.slice(0, 5).forEach(item => {
+                    log(`  ${item.isDirectory ? '📁' : '📄'} ${item.name}`, 'info');
+                });
+                if (items.length > 5) {
+                    log(`  ... and ${items.length - 5} more`, 'info');
+                }
+            } catch (error) {
+                log(`❌ List failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSaveDoc() {
+            log('Testing document save...', 'info');
+            
+            try {
+                const docData = {
+                    blocks: [
+                        { type: 'header', data: { text: 'Test Document', level: 1 } },
+                        { type: 'paragraph', data: { text: 'This is a test document.' } }
+                    ]
+                };
+                const result = await window.puterFS.saveDocument(docData, 'test_doc.json', 'json');
+                log(`✅ Document saved: ${result.name}`, 'success');
+                log(`Path: ${result.path}`, 'info');
+            } catch (error) {
+                log(`❌ Save document failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testListDocs() {
+            log('Testing document listing...', 'info');
+            
+            try {
+                const docs = await window.puterFS.listDocuments();
+                log(`✅ Found ${docs.length} documents`, 'success');
+                docs.forEach(doc => {
+                    log(`  📄 ${doc.name} (${window.puterFS.formatFileSize(doc.size)})`, 'info');
+                });
+            } catch (error) {
+                log(`❌ List documents failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testStats() {
+            log('Testing storage statistics...', 'info');
+            
+            try {
+                const stats = await window.puterFS.getStorageStats();
+                log(`✅ Storage stats retrieved`, 'success');
+                log(`Documents: ${stats.documents.count} files (${stats.documents.sizeFormatted})`, 'info');
+                log(`Attachments: ${stats.attachments.count} files (${stats.attachments.sizeFormatted})`, 'info');
+                log(`Total: ${stats.total.sizeFormatted}`, 'info');
+            } catch (error) {
+                log(`❌ Stats failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function runAllTests() {
+            clearResults();
+            log('🚀 Running all tests...', 'info');
+            log('═'.repeat(60), 'info');
+            
+            await testInit();
+            await new Promise(r => setTimeout(r, 500));
+            
+            await testWrite();
+            await new Promise(r => setTimeout(r, 500));
+            
+            await testRead();
+            await new Promise(r => setTimeout(r, 500));
+            
+            await testMkdir();
+            await new Promise(r => setTimeout(r, 500));
+            
+            await testList();
+            await new Promise(r => setTimeout(r, 500));
+            
+            await testSaveDoc();
+            await new Promise(r => setTimeout(r, 500));
+            
+            await testListDocs();
+            await new Promise(r => setTimeout(r, 500));
+            
+            await testStats();
+            
+            log('═'.repeat(60), 'info');
+            log('✅ All tests completed', 'success');
+        }
+        
+        // Auto-run init test on load
+        window.addEventListener('load', () => {
+            setTimeout(testInit, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Denial AI - Quick Demo</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #0a0f1a;
+            color: #f8fafc;
+        }
+        .demo-card {
+            background: #111827;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        h1 { color: #3b82f6; }
+        button {
+            background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        button:hover { transform: translateY(-2px); }
+        pre {
+            background: #1e293b;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        .success { color: #10b981; }
+        .warning { color: #f59e0b; }
+        .error { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <h1>🏦 Mortgage Denial AI - Quick Demo</h1>
+    
+    <div class="demo-card">
+        <h2>Test AI Generation</h2>
+        <p>Click to generate a sample denial letter with full FCRA/ECOA compliance:</p>
+        <button onclick="testGeneration()">Generate Sample Letter</button>
+        <button onclick="testCompliance()">Test Compliance Validator</button>
+        <button onclick="testStorage()">Test Cloud Storage</button>
+        <div id="output" style="margin-top: 20px;"></div>
+    </div>
+
+    <div class="demo-card">
+        <h2>System Status</h2>
+        <div id="status">Checking Puter.js availability...</div>
+    </div>
+
+    <script src="mortgage-denial-ai-engine.js"></script>
+    <script src="mortgage-compliance-validator.js"></script>
+    <script src="mortgage-denial-storage.js"></script>
+
+    <script>
+        let aiEngine, validator, storage;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                if (!window.puter) {
+                    statusDiv.innerHTML = '<span class="error">❌ Puter.js not loaded</span>';
+                    return;
+                }
+
+                aiEngine = new MortgageDenialAIEngine();
+                validator = new MortgageComplianceValidator();
+                storage = new MortgageDenialStorage();
+
+                await storage.initialize();
+
+                statusDiv.innerHTML = `
+                    <span class="success">✅ Puter.js Connected</span><br>
+                    <span class="success">✅ AI Engine Ready</span><br>
+                    <span class="success">✅ Validator Ready</span><br>
+                    <span class="success">✅ Storage Initialized</span><br>
+                    <br>
+                    Available Models: ${aiEngine.getAvailableModels().map(m => m.label).join(', ')}
+                `;
+            } catch (error) {
+                statusDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        });
+
+        async function testGeneration() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<p>🤖 Generating letter with GPT-4o...</p>';
+
+            try {
+                const sampleApp = {
+                    application_id: 'DEMO-2025-001',
+                    application_date: '2025-01-15',
+                    applicant_name: 'John Smith',
+                    applicant_address: '123 Main Street',
+                    applicant_city: 'Denver',
+                    applicant_state: 'CO',
+                    applicant_zip: '80202',
+                    loan_type: 'conventional',
+                    loan_amount: 450000,
+                    property_address: '456 Oak Avenue, Denver, CO 80202',
+                    loan_purpose: 'purchase',
+                    credit_score: 610,
+                    credit_bureau: 'Equifax'
+                };
+
+                const reasons = [
+                    {
+                        code: 'IE04',
+                        dti_ratio: 0.52,
+                        max_dti: 0.43,
+                        monthly_debt: 4200,
+                        monthly_income: 8000
+                    }
+                ];
+
+                const result = await aiEngine.generateDenialLetter(sampleApp, reasons, {
+                    model: 'gpt-4o',
+                    stream: false
+                });
+
+                if (result.success) {
+                    output.innerHTML = `
+                        <h3 class="success">✅ Letter Generated!</h3>
+                        <p><strong>Compliance Score:</strong> ${result.validation.compliance_score}/100</p>
+                        <p><strong>Model:</strong> ${result.metadata.model}</p>
+                        <p><strong>Time:</strong> ${result.metadata.generationTime}ms</p>
+                        <h4>Letter Preview (first 1000 chars):</h4>
+                        <pre>${result.content.substring(0, 1000)}...</pre>
+                        <h4>Validation Summary:</h4>
+                        <pre>${JSON.stringify(result.validation, null, 2)}</pre>
+                    `;
+                } else {
+                    output.innerHTML = `<p class="error">❌ Error: ${result.error}</p>`;
+                }
+            } catch (error) {
+                output.innerHTML = `<p class="error">❌ Exception: ${error.message}</p>`;
+            }
+        }
+
+        async function testCompliance() {
+            const output = document.getElementById('output');
+            
+            const sampleLetter = `FIRST NATIONAL MORTGAGE
+123 Financial Plaza
+San Francisco, CA 94111
+
+January 15, 2025
+
+ADVERSE ACTION NOTICE
+
+John Smith
+123 Main Street
+Denver, CO 80202
+
+RE: Mortgage Application Decision
+
+Dear Mr. Smith:
+
+We regret to inform you that your application for a mortgage loan in the amount of $450,000 has been DENIED.
+
+The principal reason for this adverse action:
+
+1. DEBT-TO-INCOME RATIO TOO HIGH
+   Your monthly debt obligations of $4,200 represent 52.0% of your gross monthly income of $8,000. 
+   Our lending guidelines require a maximum debt-to-income ratio of 43.0%. Your obligations exceed 
+   this threshold by approximately 9.0 percentage points.
+
+CREDIT INFORMATION:
+Your credit score of 610 was obtained from Equifax (P.O. Box 740241, Atlanta, GA 30374, 1-800-685-1111).
+
+Under the Fair Credit Reporting Act, you have the right to obtain a free copy of your credit report 
+within 60 days of receiving this notice.
+
+Under the Equal Credit Opportunity Act, we cannot discriminate based on race, color, religion, 
+national origin, sex, marital status, age, or because you receive public assistance income.
+
+Sincerely,
+First National Mortgage`;
+
+            const validation = validator.validateLetter(sampleLetter, {
+                credit_score: 610,
+                credit_bureau: 'Equifax'
+            }, [{code: 'IE04'}]);
+
+            output.innerHTML = `
+                <h3>Compliance Test Results:</h3>
+                <p><strong>Status:</strong> <span class="${validation.is_compliant ? 'success' : 'error'}">
+                    ${validation.is_compliant ? '✅ COMPLIANT' : '❌ NON-COMPLIANT'}
+                </span></p>
+                <p><strong>Score:</strong> ${validation.compliance_score}/100</p>
+                <pre>${validator.generateComplianceReport(validation)}</pre>
+            `;
+        }
+
+        async function testStorage() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<p>💾 Testing cloud storage...</p>';
+
+            try {
+                const testLetter = {
+                    applicationId: 'TEST-' + Date.now(),
+                    lenderId: 'demo',
+                    content: 'Test letter content',
+                    denialReasons: [{code: 'IE04'}],
+                    complianceScore: 95,
+                    validation: { is_compliant: true },
+                    model: 'gpt-4o'
+                };
+
+                const saveResult = await storage.saveLetter(testLetter);
+                
+                if (saveResult.success) {
+                    const stats = await storage.getStats();
+                    output.innerHTML = `
+                        <h3 class="success">✅ Storage Test Passed!</h3>
+                        <p><strong>Letter ID:</strong> ${saveResult.letterId}</p>
+                        <p><strong>Saved to:</strong> ${saveResult.filename}</p>
+                        <h4>Storage Stats:</h4>
+                        <pre>${JSON.stringify(stats, null, 2)}</pre>
+                    `;
+                } else {
+                    output.innerHTML = `<p class="error">❌ Save failed: ${saveResult.error}</p>`;
+                }
+            } catch (error) {
+                output.innerHTML = `<p class="error">❌ Exception: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

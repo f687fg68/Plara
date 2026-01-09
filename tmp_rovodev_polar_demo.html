@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polar.sh Integration Demo - Plara</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .demo-section {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .product-card {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .status-success { background: #10b981; color: white; }
+        .status-pending { background: #f59e0b; color: white; }
+        .status-error { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <nav class="top-navbar">
+        <a href="index.html" class="logo">
+            <span class="logo-dots">⁝</span>
+            <span class="logo-text-main">Plara</span>
+        </a>
+    </nav>
+
+    <div class="demo-container">
+        <h1 style="text-align: center; margin-bottom: 1rem;">🐻‍❄️ Polar.sh Integration Demo</h1>
+        <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 3rem;">
+            Complete payment integration test suite
+        </p>
+
+        <!-- Status Section -->
+        <div class="demo-section">
+            <h2>📊 Integration Status</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <div>
+                    <strong>Backend:</strong>
+                    <span id="backend-status" class="status-badge status-pending">Checking...</span>
+                </div>
+                <div>
+                    <strong>Products API:</strong>
+                    <span id="products-status" class="status-badge status-pending">Checking...</span>
+                </div>
+                <div>
+                    <strong>Checkout API:</strong>
+                    <span id="checkout-status" class="status-badge status-pending">Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="demo-section">
+            <h2>🛍️ Available Products</h2>
+            <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                Products loaded from Polar API
+            </p>
+            <div id="products-grid" class="demo-grid">
+                <div class="product-card">Loading products...</div>
+            </div>
+        </div>
+
+        <!-- API Test Section -->
+        <div class="demo-section">
+            <h2>🧪 API Endpoint Tests</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                <button class="btn-signin" onclick="testHealthCheck()">Test Health Check</button>
+                <button class="btn-signin" onclick="testProducts()">Test Products API</button>
+                <button class="btn-signin" onclick="testCheckout()">Test Checkout Creation</button>
+            </div>
+            <div id="api-results" class="code-block" style="margin-top: 1rem; min-height: 100px;">
+                API test results will appear here...
+            </div>
+        </div>
+
+        <!-- Integration Guide -->
+        <div class="demo-section">
+            <h2>📚 Quick Setup Guide</h2>
+            <ol style="line-height: 1.8; color: var(--color-text-secondary);">
+                <li>Create a <code>.env</code> file in the <code>backend/</code> directory</li>
+                <li>Add your Polar credentials (Access Token, Organization ID, Webhook Secret)</li>
+                <li>Start backend: <code>cd backend && python main.py</code></li>
+                <li>Start frontend: <code>npm run dev</code></li>
+                <li>Update product IDs in <code>pricing.html</code></li>
+                <li>Test checkout flow on the pricing page</li>
+            </ol>
+        </div>
+    </div>
+
+    <script type="module">
+        import { PolarCheckout } from './src/polar-checkout.js';
+
+        const polar = new PolarCheckout({
+            apiBase: '/api',
+            onSuccess: (data) => {
+                alert('✅ Payment successful!');
+            },
+            onError: (error) => {
+                console.error('Payment error:', error);
+            }
+        });
+
+        // Check backend status
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch('/api/');
+                if (response.ok) {
+                    document.getElementById('backend-status').className = 'status-badge status-success';
+                    document.getElementById('backend-status').textContent = 'Online';
+                } else {
+                    throw new Error('Backend not responding');
+                }
+            } catch (error) {
+                document.getElementById('backend-status').className = 'status-badge status-error';
+                document.getElementById('backend-status').textContent = 'Offline';
+            }
+        }
+
+        // Load products
+        async function loadProducts() {
+            try {
+                const products = await polar.getProducts();
+                const container = document.getElementById('products-grid');
+                
+                if (products && products.length > 0) {
+                    document.getElementById('products-status').className = 'status-badge status-success';
+                    document.getElementById('products-status').textContent = `${products.length} Found`;
+                    
+                    polar.renderProducts(container, products);
+                } else {
+                    container.innerHTML = '<div class="product-card"><p>No products found. Make sure to configure products in your Polar dashboard.</p></div>';
+                    document.getElementById('products-status').className = 'status-badge status-error';
+                    document.getElementById('products-status').textContent = 'No Products';
+                }
+            } catch (error) {
+                document.getElementById('products-grid').innerHTML = 
+                    '<div class="product-card"><p style="color: var(--color-error);">❌ Failed to load products: ' + error.message + '</p></div>';
+                document.getElementById('products-status').className = 'status-badge status-error';
+                document.getElementById('products-status').textContent = 'Error';
+            }
+        }
+
+        // Test functions
+        window.testHealthCheck = async function() {
+            const resultsDiv = document.getElementById('api-results');
+            resultsDiv.textContent = 'Testing health check...';
+            
+            try {
+                const response = await fetch('/api/');
+                const data = await response.json();
+                resultsDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultsDiv.textContent = '❌ Error: ' + error.message;
+            }
+        };
+
+        window.testProducts = async function() {
+            const resultsDiv = document.getElementById('api-results');
+            resultsDiv.textContent = 'Fetching products...';
+            
+            try {
+                const products = await polar.getProducts();
+                resultsDiv.textContent = JSON.stringify(products, null, 2);
+            } catch (error) {
+                resultsDiv.textContent = '❌ Error: ' + error.message;
+            }
+        };
+
+        window.testCheckout = async function() {
+            const resultsDiv = document.getElementById('api-results');
+            resultsDiv.textContent = 'Note: This will create a test checkout session.\nMake sure you have at least one product configured.';
+            
+            const productId = prompt('Enter a product ID to test (or leave empty to skip):');
+            if (!productId) {
+                resultsDiv.textContent = 'Test cancelled - no product ID provided.';
+                return;
+            }
+            
+            try {
+                resultsDiv.textContent = 'Creating checkout session...';
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        email: 'test@example.com'
+                    })
+                });
+                const data = await response.json();
+                resultsDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultsDiv.textContent = '❌ Error: ' + error.message;
+            }
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkBackendStatus();
+            loadProducts();
+        });
+    </script>
+</body>
+</html>

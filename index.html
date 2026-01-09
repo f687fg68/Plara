@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plara - AI Assistant</title>
+  <meta name="description" content="Plara - Your intelligent AI assistant for tasks, research, and more">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="editorjs.css">
+  <link rel="stylesheet" href="editorjs-inline-tools-enhanced.css">
+  <link rel="stylesheet" href="document-pagination.css">
+  <link rel="stylesheet" href="ai-features-popup.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- Uppy CSS -->
+  <link rel="stylesheet" href="https://releases.transloadit.com/uppy/v3.24.1/uppy.min.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Editor.js Styles -->
+
+  <!-- Highlight.js for Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <!-- Uppy JS (UMD) -->
+  <script src="https://releases/transloadit.com/uppy/v3.24.1/uppy.min.js"></script>
+
+  <!-- KaTeX for Formula (Optional but recommended) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+</head>
+
+<body>
+  <!-- Decorative Floating Shapes -->
+  <!-- Decorative Floating Shapes Removed for Clean Aesthetics -->
+
+  <!-- Top Navbar -->
+  <nav class="top-navbar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    <div class="logo">
+      <span class="logo-dots">⁝</span>
+      <span class="logo-text-main">Plara</span>
+    </div>
+  </nav>
+
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Glassmorphism Sidebar -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li><a href="#" class="nav-link active">Home</a></li>
+        <li><a href="help.html" class="nav-link">Help</a></li>
+        <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+        <li><a href="features.html" class="nav-link">🤖 Features</a></li>
+      </ul>
+    </nav>
+
+    <!-- Auth Section -->
+    <div class="sidebar-footer">
+      <div class="auth-section">
+        <span class="auth-status">Not signed in</span>
+        <button class="btn-signin" id="signinBtn">Sign in</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content (Unified Workspace) -->
+  <main class="main-content" id="workspaceMain">
+
+    <!-- Welcome Dashboard (Visible when no document is active/focused) -->
+    <div class="welcome-dashboard" id="welcomeDashboard">
+      <div class="welcome-header">
+        <h1 class="welcome-title">Good evening</h1>
+      </div>
+    </div>
+
+    <!-- Persistence A4 Editor -->
+    <div class="doc-editor-container" id="docEditorContainer">
+      <!-- Top Zoom Controls (Refined) -->
+      <div class="top-zoom-controls refined-zoom">
+        <button id="topZoomOutBtn" class="top-zoom-btn" title="Zoom Out">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="7" y1="11" x2="15" y2="11"></line>
+          </svg>
+        </button>
+        <span id="topZoomDisplay" class="top-zoom-display">100%</span>
+        <button id="topZoomInBtn" class="top-zoom-btn" title="Zoom In">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="11" y1="8" x2="11" y2="14"></line>
+            <line x1="8" y1="11" x2="14" y2="11"></line>
+          </svg>
+        </button>
+        <button id="topZoomFitBtn" class="top-zoom-btn top-zoom-fit" title="Fit to Screen">Fit</button>
+      </div>
+
+      <!-- Uppy Drag & Drop area for document editor -->
+      <div id="drag-drop" class="uppy-drop-area" aria-label="Drag and drop files"></div>
+
+      <!-- Document Pagination Toolbar -->
+      <div class="pagination-toolbar" id="paginationToolbar">
+        <div class="pagination-left">
+          <button id="addPageBtn" class="p-tool-btn primary" title="Add New Page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Add Page</span>
+          </button>
+          <button id="removePageBtn" class="p-tool-btn danger" title="Remove Current Page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Remove Page</span>
+          </button>
+        </div>
+        <div class="pagination-center">
+          <button id="prevPageBtn" class="p-tool-btn" title="Previous Page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <div class="page-indicator">
+            <span id="currentPageNum">1</span> / <span id="totalPageNum">1</span>
+          </div>
+          <button id="nextPageBtn" class="p-tool-btn" title="Next Page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div class="pagination-right">
+          <div class="page-jump">
+            <select id="pageSelect" class="page-select" title="Go to Page">
+              <option value="0">Page 1</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="a4-container" id="a4Page">
+        <!-- DocumentPagination will insert pages here -->
+      </div>
+
+      <!-- Editor.js Output Panel (Hidden by default/minimized) -->
+      <div class="editorjs-panel" style="display:none;">
+        <!-- ... kept for legacy structure if needed, but hiding to clean UI ... -->
+      </div>
+    </div>
+
+    <!-- Assistant output outside the chat box -->
+    <div id="aiOutput" class="ai-output" aria-live="polite"></div>
+
+    <!-- Premium Chat Input -->
+    <div class="notion-chat-container floating-chat active" id="notionChatContainer">
+      <div class="floating-chat-input-area premium-input">
+        <!-- Folder Chip Bar -->
+        <div id="folderChipBar"
+          style="display:none; align-items:center; gap:8px; padding:6px 8px; border:1px dashed #e5e7eb; border-radius:8px; margin:6px 0; background:#fafafa">
+        </div>
+        <textarea class="floating-textarea" id="chatInput" placeholder="Ask Plara to write, analyze, or code..."
+          rows="1"></textarea>
+        <div class="chat-footer-controls">
+          <button class="input-icon-btn" id="chatAttachBtn" aria-label="Attach File">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
+              </path>
+            </svg>
+          </button>
+          <div class="divider-vertical"></div>
+          <button class="input-icon-btn" id="projectBtn" aria-label="Project">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </button>
+          <div class="divider-vertical"></div>
+
+          <!-- Model Selector -->
+          <div style="position:relative; display:inline-block;">
+            <button class="input-icon-btn" id="modelSelector" aria-label="Select Model"
+              style="width:auto; padding:0 8px; gap:4px; font-size:12px; font-weight:600;">
+              <span>⚡ Turbo</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+          </div>
+
+          <div class="divider-vertical"></div>
+          <button class="input-icon-btn" id="historyBtn" aria-label="History">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+          <div class="divider-vertical"></div>
+          <button class="input-icon-btn" id="exportPdfBtn" aria-label="Export PDF" title="Export to PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <line x1="10" y1="9" x2="8" y2="9"></line>
+            </svg>
+          </button>
+          <div class="divider-vertical"></div>
+          <button class="input-icon-btn action-primary" id="chatSendBtn" aria-label="Send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Old Chat Interface Sections (Removed or integrated) -->
+  <section class="chat-interface" id="chatInterface" style="display: none;"></section>
+
+
+  <!-- Hidden File Input for Attachments -->
+  <input type="file" id="hiddenFileInput" multiple style="display: none;">
+  <!-- Hidden Folder Input -->
+  <input type="file" id="hiddenFolderInput" webkitdirectory directory multiple style="display:none;">
+
+  <!-- Puter.js Library -->
+  <script src="https://js.puter.com/v2/"></script>
+  <!-- PDF.js for PDF text extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Editor.js core and tools via CDN (no backend needed) -->
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.30.6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@2.0.9"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@2.7.6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@1.4.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@1.5.2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@2.4.5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@1.4.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.8.0"></script>
+
+  <!-- Custom Simple Image Tool -->
+  <link rel="stylesheet" href="simple-image.css">
+  <script src="simple-image.js"></script>
+
+  <!-- Puter.js FS Integration Module -->
+  <script src="puter-fs-integration.js"></script>
+
+  <!-- Puter.js FS UI Components -->
+  <script src="puter-fs-ui.js"></script>
+
+  <!-- Puter.js KV Integration Module -->
+  <script src="puter-kv-integration.js"></script>
+
+  <!-- AI Regulatory Response Writer Module -->
+  <script src="regulatory-translation-backend.js"></script>
+  <script src="regulatory-response-writer.js"></script>
+
+  <!-- Enhanced Inline Tools for Editor.js -->
+  <script src="editorjs-inline-tools-enhanced.js"></script>
+
+  <!-- Document Pagination System -->
+  <script src="document-pagination.js"></script>
+
+
+
+  <!-- DisputeShield AI - Chargeback & Dispute Response Writer -->
+  <script src="dispute-response-writer.js"></script>
+
+  <!-- AppealGuard AI - Academic Appeal Response Writer -->
+  <script src="appeal-response-writer.js"></script>
+  <script src="appeal-ai-engine.js"></script>
+  <script src="appeal-display.js"></script>
+
+  <!-- PushbackPro AI - Vendor & Contract Response Writer -->
+  <script src="pushback-response-writer.js"></script>
+  <script src="pushback-ai-engine.js"></script>
+  <script src="pushback-display.js"></script>
+
+  <!-- ChurnGuard - Customer Success Churn Prevention Engine -->
+  <script src="churnguard-ai-engine.js"></script>
+  <script src="churnguard-response-writer.js"></script>
+  <script src="churnguard-display.js"></script>
+
+  <!-- SafeResponse - AI De-escalation Response Generator -->
+  <script src="saferesponse-ai-engine.js"></script>
+  <script src="saferesponse-writer.js"></script>
+  <script src="saferesponse-display.js"></script>
+
+  <!-- ScamBaiter Pro - AI Scam Response Generator -->
+  <script src="scambaiter-ai-engine.js"></script>
+  <script src="scambaiter-response-writer.js"></script>
+  <script src="scambaiter-display.js"></script>
+  <script src="scambaiter-integration.js"></script>
+
+  <!-- CivilReply - AI Political Discourse Generator -->
+  <script src="civilreply-ai-engine.js"></script>
+  <script src="civilreply-response-writer.js"></script>
+  <script src="civilreply-display.js"></script>
+  <script src="civilreply-integration.js"></script>
+
+  <!-- AI Insurance Claim Response Writer -->
+  <script src="insurance-response-writer.js"></script>
+
+  <!-- PushbackPro - AI Vendor & Contract Response Writer -->
+  <script src="pushback-ai-engine.js"></script>
+  <script src="pushback-response-writer.js"></script>
+  <script src="pushback-display.js"></script>
+
+  <!-- HealthGuard - AI Patient Portal Assistant -->
+  <script src="health-ai-engine.js"></script>
+  <script src="health-response-writer.js"></script>
+  <script src="health-display.js"></script>
+
+  <!-- PriorAuthGuard AI - Prior Authorization Denial Response -->
+  <script src="prior-auth-response-writer.js"></script>
+  <script src="prior-auth-ai-engine.js"></script>
+  <script src="prior-auth-display.js"></script>
+
+  <!-- GovProposal AI - Government RFP Writer -->
+  <script src="rfp-ai-engine.js"></script>
+  <script src="rfp-response-writer.js"></script>
+  <script src="rfp-display.js"></script>
+
+  <!-- ChurnGuard AI - Customer Success Engine -->
+  <script src="churn-ai-engine.js"></script>
+  <script src="churn-response-writer.js"></script>
+  <script src="churn-display.js"></script>
+
+  <!-- LegalMind AI - Discovery Generator -->
+  <script src="discovery-ai-engine.js"></script>
+  <script src="discovery-response-writer.js"></script>
+  <script src="discovery-display.js"></script>
+
+  <!-- ExecWriter AI - Executive Ghostwriter -->
+  <script src="exec-ai-engine.js"></script>
+  <script src="exec-response-writer.js"></script>
+  <script src="exec-display.js"></script>
+
+  <!-- SafeSpace AI - Harassment De-Escalation -->
+  <script src="safety-ai-engine.js"></script>
+  <script src="safety-response-writer.js"></script>
+  <script src="safety-display.js"></script>
+
+  <!-- ScamBaiter AI - Time Wasting Engine -->
+  <script src="scam-ai-engine.js"></script>
+  <script src="scam-response-writer.js"></script>
+  <script src="scam-display.js"></script>
+
+  <!-- CivilMind AI - Constructive Discourse -->
+  <script src="civil-ai-engine.js"></script>
+  <script src="civil-response-writer.js"></script>
+  <script src="civil-display.js"></script>
+
+  <!-- MortgageGuard AI - Lender Compliance -->
+  <script src="mortgage-ai-engine.js"></script>
+  <script src="mortgage-response-writer.js"></script>
+  <script src="mortgage-display.js"></script>
+
+  <!-- Session Manager -->
+  <script src="puter-session-manager.js"></script>
+
+  <!-- Session History Modal -->
+  <div id="sessionHistoryModal" class="session-history-modal">
+    <div class="session-history-content">
+      <div class="session-history-header">
+        <h2>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Conversation History
+        </h2>
+        <button class="session-history-close" id="closeHistoryModal" aria-label="Close">×</button>
+      </div>
+      <div class="session-history-controls">
+        <button class="session-control-btn" id="refreshHistoryBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 4v6h6M23 20v-6h-6" />
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
+          </svg>
+          Refresh
+        </button>
+        <button class="session-control-btn" id="sortHistoryBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+          </svg>
+          Sort by Date
+        </button>
+        <button class="session-control-btn danger" id="clearAllHistoryBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          </svg>
+          Clear All
+        </button>
+      </div>
+      <div id="sessionList" class="session-list">
+        <div class="session-loading">
+          <div class="session-spinner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Folder Viewer Panel -->
+  <div id="folderViewer"
+    style="display:none; position: fixed; bottom: 92px; left: 16px; right:16px; max-height: 50vh; overflow:auto; background:#fff; border:1px solid #e5e7eb; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.1); z-index: 1000;">
+    <div
+      style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-bottom:1px solid #eee;">
+      <div id="folderViewerTitle" style="font-weight:700; color:#111827;">Folder</div>
+      <div style="display:flex; gap:8px;">
+        <button id="closeFolderBtn" class="input-icon-btn" title="Close Folder"
+          style="border:1px solid #e5e7eb; padding:6px 10px; border-radius:6px;">Close Folder ✕</button>
+        <button id="hideFolderViewerBtn" class="input-icon-btn" title="Hide Panel"
+          style="border:1px solid #e5e7eb; padding:6px 10px; border-radius:6px;">Hide Panel ▾</button>
+      </div>
+    </div>
+    <div id="folderViewerBody"
+      style="padding:12px 14px; display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:12px;">
+    </div>
+  </div>
+
+  <div id="modelDropdown" class="model-dropdown"
+    style="display:none; position:fixed; width:240px; max-height:130px; overflow-y:auto; overscroll-behavior:contain; background:rgba(255, 255, 255, 0.95); backdrop-filter:blur(12px); border:1px solid rgba(229, 231, 235, 0.8); border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,0.12); padding:6px; z-index:10000; transition:all 0.2s ease;">
+    <div class="dropdown-item-dark active" data-model="gemini-3-pro-preview"
+      style="padding:8px 12px; border-radius:6px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:8px;">
+      <span>🚀</span>
+      <div style="display:flex; flex-direction:column;">
+        <span style="font-weight:600; color:#111827;">Gemini 3.0 Pro</span>
+        <span style="font-size:11px; color:#6b7280;">High Performance</span>
+      </div>
+    </div>
+    <div class="dropdown-item-dark" data-model="claude-sonnet-4"
+      style="padding:8px 12px; border-radius:6px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:8px;">
+      <span>🧠</span>
+      <div style="display:flex; flex-direction:column;">
+        <span style="font-weight:600; color:#111827;">Claude Sonnet 4.5</span>
+        <span style="font-size:11px; color:#6b7280;">Complex Reasoning</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="folder-agent.js"></script>
+  <script src="export-manager.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

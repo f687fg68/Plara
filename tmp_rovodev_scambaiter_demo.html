@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScamBaiter Pro - AI Scam Response Generator</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- ScamBaiter Modules -->
+    <script src="scambaiter-ai-engine.js"></script>
+    <script src="scambaiter-response-writer.js"></script>
+    <script src="scambaiter-display.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .demo-section {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .input-area {
+            margin-bottom: 25px;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 20px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 16px;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 18px 30px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .response-area {
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 25px;
+            min-height: 200px;
+            border: 2px solid #334155;
+        }
+
+        .response-placeholder {
+            text-align: center;
+            color: #64748b;
+            padding: 60px 20px;
+        }
+
+        .response-placeholder-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .response-content {
+            display: none;
+        }
+
+        .response-content.show {
+            display: block;
+        }
+
+        .response-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .meta-badge {
+            padding: 6px 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #818cf8;
+        }
+
+        .response-text {
+            font-family: 'Inter', monospace;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            color: #f1f5f9;
+        }
+
+        .response-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            padding: 12px 18px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            color: #94a3b8;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: #6366f1;
+            color: #818cf8;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 150px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 24px;
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification.success {
+            border-color: #10b981;
+        }
+
+        .notification.error {
+            border-color: #ef4444;
+        }
+
+        .loading-spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tone-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .tone-card {
+            padding: 15px;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .tone-card:hover {
+            border-color: #6366f1;
+            transform: translateY(-2px);
+        }
+
+        .tone-card.selected {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .tone-emoji {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .tone-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🎣</div>
+            <h1>ScamBaiter Pro</h1>
+            <p class="tagline">AI-powered scam response generator using Gemini 3.0 Pro and Claude Sonnet 4.5</p>
+        </div>
+
+        <!-- Demo Section -->
+        <div class="demo-section">
+            <h2 style="margin-bottom: 25px;">Generate Time-Wasting Response</h2>
+
+            <!-- Tone Selector -->
+            <div class="input-area">
+                <label class="input-label">
+                    <span>🎭</span>
+                    Select Baiting Personality
+                </label>
+                <div class="tone-selector" id="toneSelector">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Scam Input -->
+            <div class="input-area">
+                <label class="input-label">
+                    <span>📧</span>
+                    Paste Scam Message
+                </label>
+                <textarea 
+                    id="scamInput" 
+                    placeholder="Paste the scam email or message here...
+
+Example:
+Dear Friend,
+I am Prince Abubakar from Nigeria. I have $45 million USD that needs urgent transfer. I will give you 30% if you help me..."
+                ></textarea>
+            </div>
+
+            <!-- Generate Button -->
+            <button class="btn-primary" id="generateBtn">
+                <span>🎯</span>
+                <span>Generate Bait Response</span>
+            </button>
+        </div>
+
+        <!-- Response Section -->
+        <div class="demo-section">
+            <h2 style="margin-bottom: 25px;">Generated Response</h2>
+            
+            <div class="response-area">
+                <div class="response-placeholder" id="responsePlaceholder">
+                    <div class="response-placeholder-icon">🎣</div>
+                    <p>Generate a response to see it here!</p>
+                </div>
+
+                <div class="response-content" id="responseContent">
+                    <div class="response-meta" id="responseMeta">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <div class="response-text" id="responseText"></div>
+                    <div class="response-actions">
+                        <button class="btn-secondary" id="copyBtn">
+                            📋 Copy to Clipboard
+                        </button>
+                        <button class="btn-secondary" id="regenerateBtn">
+                            🔄 Regenerate
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="totalGenerated">0</div>
+                <div class="stat-label">Responses Generated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="timeWasted">0m</div>
+                <div class="stat-label">Est. Time Wasted</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Application State
+        let engine = null;
+        let writer = null;
+        let currentTone = 'elderly';
+
+        // Initialize
+        async function init() {
+            try {
+                // Initialize AI Engine
+                engine = new ScamBaiterAIEngine();
+                await engine.initialize();
+
+                // Initialize Response Writer
+                writer = new ScamBaiterResponseWriter();
+                await writer.initialize(engine);
+
+                // Render tones
+                renderTones();
+
+                // Setup event listeners
+                setupEventListeners();
+
+                showNotification('✅ ScamBaiter Pro initialized', 'success');
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showNotification('❌ Failed to initialize', 'error');
+            }
+        }
+
+        // Render tone selector
+        function renderTones() {
+            const container = document.getElementById('toneSelector');
+            const tones = engine.getTones();
+
+            container.innerHTML = tones.slice(0, 6).map(tone => `
+                <div class="tone-card ${tone.id === currentTone ? 'selected' : ''}" data-tone="${tone.id}">
+                    <div class="tone-emoji">${tone.emoji}</div>
+                    <div class="tone-name">${tone.name}</div>
+                </div>
+            `).join('');
+
+            // Add click handlers
+            container.querySelectorAll('.tone-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    currentTone = card.dataset.tone;
+                    container.querySelectorAll('.tone-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                });
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('generateBtn').addEventListener('click', generateResponse);
+            document.getElementById('regenerateBtn').addEventListener('click', generateResponse);
+            document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
+        }
+
+        // Generate response
+        async function generateResponse() {
+            const scamInput = document.getElementById('scamInput').value.trim();
+            
+            if (!scamInput) {
+                showNotification('❌ Please paste a scam message', 'error');
+                return;
+            }
+
+            const generateBtn = document.getElementById('generateBtn');
+            const responsePlaceholder = document.getElementById('responsePlaceholder');
+            const responseContent = document.getElementById('responseContent');
+            const responseText = document.getElementById('responseText');
+
+            // Set loading state
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<div class="loading-spinner"></div><span>Generating...</span>';
+
+            // Hide placeholder, show response area
+            responsePlaceholder.style.display = 'none';
+            responseContent.classList.add('show');
+            responseText.textContent = 'Generating...';
+
+            try {
+                const options = {
+                    tone: currentTone,
+                    tier: 'free',
+                    absurdity: 50,
+                    length: 50,
+                    fakeDetails: true,
+                    questions: true
+                };
+
+                let fullResponse = '';
+                const result = await writer.generateResponse(
+                    scamInput,
+                    options,
+                    (chunk, full) => {
+                        fullResponse = full;
+                        responseText.textContent = full;
+                    }
+                );
+
+                // Update metadata
+                const meta = document.getElementById('responseMeta');
+                meta.innerHTML = `
+                    <span class="meta-badge">${result.tone.emoji} ${result.tone.name}</span>
+                    <span class="meta-badge">📝 ${result.wordCount} words</span>
+                    <span class="meta-badge">⏱️ ${result.timeWasted}min wasted</span>
+                    <span class="meta-badge">🤖 ${result.model}</span>
+                `;
+
+                // Update stats
+                updateStats();
+
+                showNotification('✅ Response generated!', 'success');
+
+            } catch (error) {
+                console.error('Generation error:', error);
+                responseText.textContent = 'Error: ' + error.message;
+                showNotification('❌ Generation failed', 'error');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<span>🎯</span><span>Generate Bait Response</span>';
+            }
+        }
+
+        // Copy to clipboard
+        async function copyToClipboard() {
+            const text = document.getElementById('responseText').textContent;
+            try {
+                await navigator.clipboard.writeText(text);
+                showNotification('✅ Copied to clipboard!', 'success');
+            } catch (error) {
+                showNotification('❌ Copy failed', 'error');
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const stats = engine.getStats();
+            document.getElementById('totalGenerated').textContent = stats.totalGenerated;
+            
+            const timeWasted = stats.timeWasted;
+            document.getElementById('timeWasted').textContent = 
+                timeWasted >= 60 ? `${Math.floor(timeWasted / 60)}h ${timeWasted % 60}m` : `${timeWasted}m`;
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>

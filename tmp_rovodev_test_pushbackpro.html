@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PushbackPro Test Suite</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f9fafb;
+        }
+        .test-section {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            color: #2563eb;
+            margin-bottom: 1rem;
+        }
+        .status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        button {
+            padding: 0.75rem 1.5rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .output {
+            background: #f9fafb;
+            padding: 1rem;
+            border-left: 4px solid #2563eb;
+            margin: 1rem 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛡️ PushbackPro Integration Test Suite</h1>
+    
+    <!-- Module Loading Tests -->
+    <div class="test-section">
+        <h2>1. Module Loading Tests</h2>
+        <div id="module-status">
+            <span class="status pending">Checking...</span>
+        </div>
+        <button onclick="testModuleLoading()">Run Module Tests</button>
+        <div id="module-output" class="output" style="display:none;"></div>
+    </div>
+
+    <!-- State Management Tests -->
+    <div class="test-section">
+        <h2>2. State Management Tests</h2>
+        <div id="state-status">
+            <span class="status pending">Not Run</span>
+        </div>
+        <button onclick="testStateManagement()">Test State</button>
+        <div id="state-output" class="output" style="display:none;"></div>
+    </div>
+
+    <!-- UI Generation Tests -->
+    <div class="test-section">
+        <h2>3. UI Wizard Generation</h2>
+        <div id="ui-status">
+            <span class="status pending">Not Run</span>
+        </div>
+        <button onclick="testUIGeneration()">Generate UI</button>
+        <div id="ui-output" class="output" style="display:none;"></div>
+    </div>
+
+    <!-- AI Generation Test -->
+    <div class="test-section">
+        <h2>4. AI Generation Test (Mock)</h2>
+        <div id="ai-status">
+            <span class="status pending">Not Run</span>
+        </div>
+        <button onclick="testAIGeneration()">Test AI (Mock)</button>
+        <div id="ai-output" class="output" style="display:none;"></div>
+        
+        <h3 style="margin-top: 2rem;">Real AI Test (Requires Puter Auth)</h3>
+        <button onclick="testRealAI()">Test Real AI Generation</button>
+        <div id="real-ai-output" class="output" style="display:none;"></div>
+    </div>
+
+    <!-- Integration Test -->
+    <div class="test-section">
+        <h2>5. Full Integration Test</h2>
+        <div id="integration-status">
+            <span class="status pending">Not Run</span>
+        </div>
+        <button onclick="testFullIntegration()">Run Full Test</button>
+        <div id="integration-output" class="output" style="display:none;"></div>
+    </div>
+
+    <!-- Leverage Points Test -->
+    <div class="test-section">
+        <h2>6. Leverage Points System</h2>
+        <div id="leverage-status">
+            <span class="status pending">Not Run</span>
+        </div>
+        <button onclick="testLeveragePoints()">Test Leverage System</button>
+        <div id="leverage-output" class="output" style="display:none;"></div>
+    </div>
+
+    <!-- Load PushbackPro Modules -->
+    <script src="pushback-response-writer.js"></script>
+    <script src="pushback-ai-engine.js"></script>
+    <script src="pushback-display.js"></script>
+
+    <script>
+        // Mock functions for testing
+        function appendNotionMessage(msg) {
+            console.log('Mock appendNotionMessage:', msg);
+        }
+
+        function scrollToNotionBottom() {
+            console.log('Mock scrollToNotionBottom');
+        }
+
+        function showNotification(msg, type) {
+            console.log('Mock showNotification:', msg, type);
+        }
+
+        // Test 1: Module Loading
+        function testModuleLoading() {
+            const output = document.getElementById('module-output');
+            const status = document.getElementById('module-status');
+            output.style.display = 'block';
+            output.innerHTML = '<strong>Running Module Tests...</strong><br><br>';
+            
+            let allPassed = true;
+            const tests = [
+                { name: 'pushback-response-writer.js', check: () => typeof window.pushbackCommandHandler === 'function' },
+                { name: 'pushback-ai-engine.js', check: () => typeof window.generatePushbackWithAI === 'function' },
+                { name: 'pushback-display.js', check: () => typeof window.generatePushbackResponse === 'function' },
+                { name: 'setResponseType function', check: () => typeof window.setResponseType === 'function' },
+                { name: 'setNegotiationTone function', check: () => typeof window.setNegotiationTone === 'function' },
+                { name: 'setPushbackModel function', check: () => typeof window.setPushbackModel === 'function' },
+                { name: 'toggleLeveragePoint function', check: () => typeof window.toggleLeveragePoint === 'function' },
+                { name: 'copyPushbackToClipboard function', check: () => typeof window.copyPushbackToClipboard === 'function' },
+                { name: 'savePushbackToPuter function', check: () => typeof window.savePushbackToPuter === 'function' },
+                { name: 'insertPushbackToDocument function', check: () => typeof window.insertPushbackToDocument === 'function' },
+                { name: 'refinePushback function', check: () => typeof window.refinePushback === 'function' },
+                { name: 'downloadPushback function', check: () => typeof window.downloadPushback === 'function' },
+                { name: 'calculateNegotiationSavings function', check: () => typeof window.calculateNegotiationSavings === 'function' },
+                { name: 'generateNegotiationTips function', check: () => typeof window.generateNegotiationTips === 'function' }
+            ];
+
+            tests.forEach(test => {
+                const passed = test.check();
+                output.innerHTML += `${passed ? '✅' : '❌'} ${test.name}: ${passed ? 'LOADED' : 'MISSING'}<br>`;
+                if (!passed) allPassed = false;
+            });
+
+            status.innerHTML = allPassed 
+                ? '<span class="status success">✅ All Modules Loaded</span>'
+                : '<span class="status error">❌ Some Modules Failed</span>';
+        }
+
+        // Test 2: State Management
+        function testStateManagement() {
+            const output = document.getElementById('state-output');
+            const status = document.getElementById('state-status');
+            output.style.display = 'block';
+            output.innerHTML = '<strong>Testing State Management...</strong><br><br>';
+
+            let allPassed = true;
+
+            // Test initial state
+            if (window.pushbackState) {
+                output.innerHTML += '✅ pushbackState exists<br>';
+                output.innerHTML += `Initial State: ${JSON.stringify(window.pushbackState, null, 2)}<br><br>`;
+            } else {
+                output.innerHTML += '❌ pushbackState not found<br>';
+                allPassed = false;
+            }
+
+            // Test setResponseType
+            try {
+                window.setResponseType('price-increase');
+                output.innerHTML += '✅ setResponseType("price-increase") successful<br>';
+                output.innerHTML += `New type: ${window.pushbackState.responseType}<br><br>`;
+            } catch (e) {
+                output.innerHTML += `❌ setResponseType failed: ${e.message}<br>`;
+                allPassed = false;
+            }
+
+            // Test setNegotiationTone
+            try {
+                window.setNegotiationTone('firm');
+                output.innerHTML += '✅ setNegotiationTone("firm") successful<br>';
+                output.innerHTML += `New tone: ${window.pushbackState.negotiationTone}<br><br>`;
+            } catch (e) {
+                output.innerHTML += `❌ setNegotiationTone failed: ${e.message}<br>`;
+                allPassed = false;
+            }
+
+            // Test setPushbackModel
+            try {
+                window.setPushbackModel('claude-3.5-sonnet');
+                output.innerHTML += '✅ setPushbackModel("claude-3.5-sonnet") successful<br>';
+                output.innerHTML += `New model: ${window.pushbackState.selectedModel}<br>`;
+            } catch (e) {
+                output.innerHTML += `❌ setPushbackModel failed: ${e.message}<br>`;
+                allPassed = false;
+            }
+
+            status.innerHTML = allPassed 
+                ? '<span class="status success">✅ State Tests Passed</span>'
+                : '<span class="status error">❌ State Tests Failed</span>';
+        }
+
+        // Test 3: UI Generation
+        function testUIGeneration() {
+            const output = document.getElementById('ui-output');
+            const status = document.getElementById('ui-status');
+            output.style.display = 'block';
+            output.innerHTML = '<strong>Generating UI...</strong><br><br>';
+
+            try {
+                // Mock appendNotionMessage
+                const originalAppend = window.appendNotionMessage;
+                let capturedUI = '';
+                
+                window.appendNotionMessage = function(msg) {
+                    capturedUI = msg.content;
+                };
+
+                // Trigger wizard
+                if (window.pushbackCommandHandler) {
+                    window.pushbackCommandHandler('/pushback start');
+                }
+
+                // Restore original
+                if (originalAppend) {
+                    window.appendNotionMessage = originalAppend;
+                }
+
+                if (capturedUI && capturedUI.includes('PushbackPro')) {
+                    output.innerHTML += '✅ UI Generated Successfully<br><br>';
+                    output.innerHTML += '<strong>Generated HTML Preview:</strong><br>';
+                    output.innerHTML += `<div style="border:1px solid #ccc; padding:1rem; max-height:300px; overflow:auto;">${capturedUI}</div>`;
+                    status.innerHTML = '<span class="status success">✅ UI Generated</span>';
+                } else {
+                    output.innerHTML += '❌ UI generation failed or incomplete<br>';
+                    status.innerHTML = '<span class="status error">❌ UI Failed</span>';
+                }
+            } catch (e) {
+                output.innerHTML += `❌ Error: ${e.message}<br>`;
+                status.innerHTML = '<span class="status error">❌ Error</span>';
+            }
+        }
+
+        // Test 4: Mock AI Generation
+        function testAIGeneration() {
+            const output = document.getElementById('ai-output');
+            const status = document.getElementById('ai-status');
+            output.style.display = 'block';
+            output.innerHTML = '<strong>Testing AI Generation Logic (Mock)...</strong><br><br>';
+
+            // Set test data
+            window.pushbackState = {
+                responseType: 'price-increase',
+                negotiationTone: 'firm',
+                selectedModel: 'claude-3.5-sonnet',
+                leveragePoints: ['alternatives', 'loyalty'],
+                formData: {
+                    vendorName: 'Test Vendor Inc.',
+                    companyName: 'My Test Company',
+                    issueDescription: 'Vendor increased price from $1,500 to $2,100/month (40% increase)',
+                    desiredOutcome: 'Cap increase at 10% maximum',
+                    additionalContext: '4-year customer, always paid on time'
+                },
+                currentDraft: '',
+                history: []
+            };
+
+            output.innerHTML += '✅ Test state configured<br>';
+            output.innerHTML += `Type: ${window.pushbackState.responseType}<br>`;
+            output.innerHTML += `Tone: ${window.pushbackState.negotiationTone}<br>`;
+            output.innerHTML += `Model: ${window.pushbackState.selectedModel}<br>`;
+            output.innerHTML += `Leverage Points: ${window.pushbackState.leveragePoints.join(', ')}<br><br>`;
+
+            output.innerHTML += '<strong>Note:</strong> Real AI generation requires Puter authentication. Use "Test Real AI Generation" button for actual test.<br>';
+            
+            status.innerHTML = '<span class="status success">✅ Logic Ready</span>';
+        }
+
+        // Test 5: Real AI Generation
+        async function testRealAI() {
+            const output = document.getElementById('real-ai-output');
+            output.style.display = 'block';
+            output.innerHTML = '<strong>Running Real AI Generation Test...</strong><br><br>';
+
+            // Check Puter
+            if (typeof puter === 'undefined') {
+                output.innerHTML += '❌ Puter.js not loaded<br>';
+                return;
+            }
+
+            // Set test data
+            window.pushbackState = {
+                responseType: 'price-increase',
+                negotiationTone: 'firm',
+                selectedModel: 'claude-3.5-sonnet',
+                leveragePoints: ['alternatives', 'loyalty', 'volume'],
+                formData: {
+                    vendorName: 'Acme Software Inc.',
+                    companyName: 'Beta Technologies LLC',
+                    issueDescription: 'Vendor notified us of a 40% price increase from $1,500/month to $2,100/month, effective next month. They cited "increased infrastructure costs" but provided no detailed justification. We have been customers for 4 years with consistent growth in usage.',
+                    desiredOutcome: 'We want to reject the full increase and propose capping it at 10% ($1,650/month) or phasing it over 6 months. If they insist on 40%, we need time to evaluate competitive alternatives.',
+                    additionalContext: 'We are their 5th largest customer by volume. We provide consistent referrals and have never missed a payment. Competitive research shows similar services at 20-30% lower pricing.'
+                },
+                currentDraft: '',
+                history: []
+            };
+
+            output.innerHTML += '✅ Test data configured<br>';
+            output.innerHTML += '⏳ Generating response with AI...<br><br>';
+
+            try {
+                const result = await window.generatePushbackWithAI();
+                output.innerHTML += '✅ <strong>AI Generation Successful!</strong><br><br>';
+                output.innerHTML += '<strong>Generated Pushback Response:</strong><br>';
+                output.innerHTML += `<pre style="background:#f3f4f6; padding:1rem; border-radius:6px; white-space:pre-wrap;">${result}</pre>`;
+                
+                // Test savings calculator
+                const savings = window.calculateNegotiationSavings({
+                    currentPrice: 1500,
+                    proposedPrice: 2100
+                });
+                
+                if (savings) {
+                    output.innerHTML += '<br><strong>Savings Calculation:</strong><br>';
+                    output.innerHTML += `Current Annual: $${savings.currentAnnual.toLocaleString()}<br>`;
+                    output.innerHTML += `Proposed Annual: $${savings.proposedAnnual.toLocaleString()}<br>`;
+                    output.innerHTML += `Increase: $${savings.increaseAmount.toLocaleString()} (${savings.increasePercent}%)<br>`;
+                    output.innerHTML += `Estimated Savings: $${savings.estimatedSavings.toLocaleString()}<br>`;
+                }
+                
+            } catch (error) {
+                output.innerHTML += `❌ AI Generation Failed: ${error.message}<br>`;
+                output.innerHTML += `<pre>${error.stack}</pre>`;
+            }
+        }
+
+        // Test 6: Full Integration
+        async function testFullIntegration() {
+            const output = document.getElementById('integration-output');
+            const status = document.getElementById('integration-status');
+            output.style.display = 'block';
+            output.innerHTML = '<strong>Running Full Integration Test...</strong><br><br>';
+
+            let allPassed = true;
+
+            // Test 1: Command handler
+            try {
+                output.innerHTML += '<strong>1. Testing Command Handler...</strong><br>';
+                if (typeof window.pushbackCommandHandler === 'function') {
+                    output.innerHTML += '✅ Command handler exists<br>';
+                } else {
+                    output.innerHTML += '❌ Command handler missing<br>';
+                    allPassed = false;
+                }
+            } catch (e) {
+                output.innerHTML += `❌ Error: ${e.message}<br>`;
+                allPassed = false;
+            }
+
+            // Test 2: State initialization
+            output.innerHTML += '<br><strong>2. Testing State Initialization...</strong><br>';
+            try {
+                window.setResponseType('sla-violation');
+                window.setNegotiationTone('assertive');
+                window.setPushbackModel('gemini-3-pro-preview');
+                
+                if (window.pushbackState.responseType === 'sla-violation' &&
+                    window.pushbackState.negotiationTone === 'assertive' &&
+                    window.pushbackState.selectedModel === 'gemini-3-pro-preview') {
+                    output.innerHTML += '✅ State management working<br>';
+                } else {
+                    output.innerHTML += '❌ State management failed<br>';
+                    allPassed = false;
+                }
+            } catch (e) {
+                output.innerHTML += `❌ Error: ${e.message}<br>`;
+                allPassed = false;
+            }
+
+            // Test 3: Display functions
+            output.innerHTML += '<br><strong>3. Testing Display Functions...</strong><br>';
+            const displayTests = [
+                'generatePushbackResponse',
+                'copyPushbackToClipboard',
+                'savePushbackToPuter',
+                'insertPushbackToDocument',
+                'refinePushback',
+                'downloadPushback'
+            ];
+
+            displayTests.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    output.innerHTML += `✅ ${func} available<br>`;
+                } else {
+                    output.innerHTML += `❌ ${func} missing<br>`;
+                    allPassed = false;
+                }
+            });
+
+            // Test 4: Utility functions
+            output.innerHTML += '<br><strong>4. Testing Utility Functions...</strong><br>';
+            try {
+                const tips = window.generateNegotiationTips('price-increase', ['alternatives']);
+                output.innerHTML += `✅ generateNegotiationTips returned ${tips.length} tips<br>`;
+                
+                const savings = window.calculateNegotiationSavings({ currentPrice: 1000, proposedPrice: 1500 });
+                output.innerHTML += `✅ calculateNegotiationSavings: $${savings.estimatedSavings} estimated savings<br>`;
+            } catch (e) {
+                output.innerHTML += `❌ Utility function error: ${e.message}<br>`;
+                allPassed = false;
+            }
+
+            output.innerHTML += '<br><strong>Integration Test Summary:</strong><br>';
+            if (allPassed) {
+                output.innerHTML += '✅ All integration tests passed!<br>';
+                output.innerHTML += '<br><strong>PushbackPro is ready to use!</strong><br>';
+                status.innerHTML = '<span class="status success">✅ Integration Complete</span>';
+            } else {
+                output.innerHTML += '❌ Some integration tests failed<br>';
+                status.innerHTML = '<span class="status error">❌ Integration Issues</span>';
+            }
+        }
+
+        // Test 7: Leverage Points
+        function testLeveragePoints() {
+            const output = document.getElementById('leverage-output');
+            const status = document.getElementById('leverage-status');
+            output.style.display = 'block';
+            output.innerHTML = '<strong>Testing Leverage Points System...</strong><br><br>';
+
+            let allPassed = true;
+
+            try {
+                // Clear leverage points
+                window.pushbackState.leveragePoints = [];
+                
+                // Add leverage points
+                window.toggleLeveragePoint('alternatives');
+                window.toggleLeveragePoint('volume');
+                window.toggleLeveragePoint('loyalty');
+                
+                output.innerHTML += `✅ Added 3 leverage points<br>`;
+                output.innerHTML += `Current points: ${window.pushbackState.leveragePoints.join(', ')}<br><br>`;
+                
+                // Remove one
+                window.toggleLeveragePoint('volume');
+                output.innerHTML += `✅ Removed 'volume' leverage point<br>`;
+                output.innerHTML += `Current points: ${window.pushbackState.leveragePoints.join(', ')}<br><br>`;
+                
+                // Verify state
+                if (window.pushbackState.leveragePoints.includes('alternatives') &&
+                    window.pushbackState.leveragePoints.includes('loyalty') &&
+                    !window.pushbackState.leveragePoints.includes('volume')) {
+                    output.innerHTML += '✅ Leverage point toggle working correctly<br>';
+                } else {
+                    output.innerHTML += '❌ Leverage point state incorrect<br>';
+                    allPassed = false;
+                }
+                
+                status.innerHTML = allPassed 
+                    ? '<span class="status success">✅ Leverage System Works</span>'
+                    : '<span class="status error">❌ Leverage System Failed</span>';
+                    
+            } catch (e) {
+                output.innerHTML += `❌ Error: ${e.message}<br>`;
+                status.innerHTML = '<span class="status error">❌ Error</span>';
+            }
+        }
+
+        // Auto-run module loading test on page load
+        window.addEventListener('load', () => {
+            setTimeout(testModuleLoading, 500);
+        });
+    </script>
+</body>
+</html>

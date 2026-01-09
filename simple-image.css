@@ -1,0 +1,69 @@
+/**
+ * SimpleImage Tool Styling
+ */
+.simple-image {
+    padding: 20px 0;
+    text-align: center;
+}
+
+.simple-image input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(86, 200, 234, 0.2);
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.simple-image input:focus {
+    border-color: #56c8ea;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(86, 200, 234, 0.1);
+}
+
+.simple-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.simple-image [contenteditable] {
+    width: 100%;
+    outline: none;
+    text-align: center;
+    font-size: 14px;
+    color: #636e72;
+    padding: 5px;
+}
+
+.simple-image [contenteditable]:empty::before {
+    content: attr(data-placeholder);
+    color: #b2bec3;
+}
+
+/* Tunes Support */
+.simple-image.withBorder img {
+    border: 1px solid rgba(86, 200, 234, 0.3);
+    padding: 5px;
+}
+
+.simple-image.withBackground {
+    background: rgba(86, 200, 234, 0.05);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.simple-image.withBackground img {
+    max-width: 60%;
+}
+
+.ce-block--stretched .simple-image img {
+    width: 100%;
+    max-width: none;
+}

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PuterKV Integration Test</title>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background: rgba(255,255,255,0.1);
+            padding: 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        button { 
+            margin: 8px; 
+            padding: 10px 20px; 
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        button:hover { 
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .test-result { 
+            margin: 12px 0; 
+            padding: 12px; 
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .success { border-left: 4px solid #10b981; }
+        .error { border-left: 4px solid #ef4444; }
+        .info { border-left: 4px solid #3b82f6; }
+        .warning { border-left: 4px solid #f59e0b; }
+        .test-section {
+            margin: 20px 0;
+            padding: 16px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #fbbf24;
+        }
+        #testResults {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 PuterKV Integration Test Suite</h1>
+        <p>Testing Puter.js Key-Value Store integration for Plara</p>
+        
+        <div class="test-section">
+            <h3>🔑 Core KV Operations</h3>
+            <button onclick="testInit()">1. Test Init</button>
+            <button onclick="testSet()">2. Test Set</button>
+            <button onclick="testGet()">3. Test Get</button>
+            <button onclick="testIncrement()">4. Test Increment</button>
+            <button onclick="testDecrement()">5. Test Decrement</button>
+            <button onclick="testDelete()">6. Test Delete</button>
+            <button onclick="testList()">7. Test List</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>👤 User Preferences</h3>
+            <button onclick="testSavePrefs()">Save Preferences</button>
+            <button onclick="testLoadPrefs()">Load Preferences</button>
+            <button onclick="testGetPref()">Get Single Pref</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>💬 Chat History</h3>
+            <button onclick="testSaveChatHistory()">Save Chat History</button>
+            <button onclick="testLoadChatHistory()">Load Chat History</button>
+            <button onclick="testListConversations()">List Conversations</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📄 Document Metadata</h3>
+            <button onclick="testSaveDocMeta()">Save Doc Metadata</button>
+            <button onclick="testLoadDocMeta()">Load Doc Metadata</button>
+            <button onclick="testListDocMeta()">List Doc Metadata</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Analytics & Stats</h3>
+            <button onclick="testTrackEvent()">Track Event</button>
+            <button onclick="testGetAnalytics()">Get Analytics</button>
+            <button onclick="testGetStats()">Get KV Stats</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚀 Advanced</h3>
+            <button onclick="testCache()">Test Cache</button>
+            <button onclick="testBatchWrite()">Test Batch Write</button>
+            <button onclick="testExport()">Export All Data</button>
+            <button onclick="runAllTests()">▶️ Run All Tests</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
+        
+        <div id="testResults"></div>
+    </div>
+    
+    <script src="https://js.puter.com/v2/"></script>
+    <script src="puter-kv-integration.js"></script>
+    
+    <script>
+        const resultsDiv = document.getElementById('testResults');
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            resultsDiv.appendChild(div);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+        
+        function clearResults() {
+            resultsDiv.innerHTML = '';
+        }
+        
+        async function testInit() {
+            log('🔧 Testing PuterKV initialization...', 'info');
+            
+            try {
+                if (window.puterKV && window.puterKV.isInitialized) {
+                    log('✅ PuterKV is initialized', 'success');
+                    log(`Config: <pre>${JSON.stringify(window.puterKV.config, null, 2)}</pre>`, 'info');
+                } else {
+                    log('⚠️ PuterKV not initialized yet, waiting...', 'warning');
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    if (window.puterKV && window.puterKV.isInitialized) {
+                        log('✅ PuterKV is now initialized', 'success');
+                    } else {
+                        log('❌ PuterKV initialization failed', 'error');
+                    }
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSet() {
+            log('📝 Testing KV set...', 'info');
+            
+            try {
+                await window.puterKV.set('test_key', 'Hello from Plara!');
+                log('✅ Set key "test_key" = "Hello from Plara!"', 'success');
+                
+                await window.puterKV.set('test_number', 42);
+                log('✅ Set key "test_number" = 42', 'success');
+                
+                await window.puterKV.set('test_object', { name: 'Plara', version: '1.0' });
+                log('✅ Set key "test_object" = {"name":"Plara","version":"1.0"}', 'success');
+            } catch (error) {
+                log(`❌ Set failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testGet() {
+            log('📖 Testing KV get...', 'info');
+            
+            try {
+                const val1 = await window.puterKV.get('test_key');
+                log(`✅ Get "test_key" = "${val1}"`, 'success');
+                
+                const val2 = await window.puterKV.get('test_number');
+                log(`✅ Get "test_number" = ${val2}`, 'success');
+                
+                const val3 = await window.puterKV.get('test_object');
+                log(`✅ Get "test_object" = ${JSON.stringify(val3)}`, 'success');
+            } catch (error) {
+                log(`❌ Get failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testIncrement() {
+            log('➕ Testing KV increment...', 'info');
+            
+            try {
+                const newVal = await window.puterKV.increment('test_counter', 1);
+                log(`✅ Incremented "test_counter" to ${newVal}`, 'success');
+                
+                const newVal2 = await window.puterKV.increment('test_counter', 5);
+                log(`✅ Incremented "test_counter" by 5 to ${newVal2}`, 'success');
+            } catch (error) {
+                log(`❌ Increment failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testDecrement() {
+            log('➖ Testing KV decrement...', 'info');
+            
+            try {
+                const newVal = await window.puterKV.decrement('test_counter', 2);
+                log(`✅ Decremented "test_counter" by 2 to ${newVal}`, 'success');
+            } catch (error) {
+                log(`❌ Decrement failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testDelete() {
+            log('🗑️ Testing KV delete...', 'info');
+            
+            try {
+                await window.puterKV.set('temp_key', 'temporary');
+                log('Created temporary key', 'info');
+                
+                await window.puterKV.delete('temp_key');
+                log('✅ Deleted "temp_key"', 'success');
+                
+                const val = await window.puterKV.get('temp_key');
+                log(`Verify deletion: ${val === null ? '✅ Key is null' : '❌ Key still exists'}`, val === null ? 'success' : 'error');
+            } catch (error) {
+                log(`❌ Delete failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testList() {
+            log('📋 Testing KV list...', 'info');
+            
+            try {
+                const keys = await window.puterKV.list('test_*');
+                log(`✅ Found ${keys.length} keys matching "test_*"`, 'success');
+                keys.slice(0, 5).forEach(key => {
+                    log(`  - ${key}`, 'info');
+                });
+            } catch (error) {
+                log(`❌ List failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSavePrefs() {
+            log('💾 Testing save user preferences...', 'info');
+            
+            try {
+                const prefs = {
+                    theme: 'dark',
+                    language: 'en',
+                    autoSave: true,
+                    fontSize: 14
+                };
+                await window.puterKV.saveUserPreferences(prefs);
+                log(`✅ Saved preferences: ${JSON.stringify(prefs)}`, 'success');
+            } catch (error) {
+                log(`❌ Save preferences failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testLoadPrefs() {
+            log('📥 Testing load user preferences...', 'info');
+            
+            try {
+                const prefs = await window.puterKV.loadUserPreferences();
+                log(`✅ Loaded preferences: ${JSON.stringify(prefs, null, 2)}`, 'success');
+            } catch (error) {
+                log(`❌ Load preferences failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testGetPref() {
+            log('🔍 Testing get single preference...', 'info');
+            
+            try {
+                const theme = await window.puterKV.getPreference('theme', 'light');
+                log(`✅ Theme preference: "${theme}"`, 'success');
+            } catch (error) {
+                log(`❌ Get preference failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSaveChatHistory() {
+            log('💬 Testing save chat history...', 'info');
+            
+            try {
+                const messages = [
+                    { role: 'user', content: 'Hello Plara!' },
+                    { role: 'assistant', content: 'Hello! How can I help you today?' },
+                    { role: 'user', content: 'Tell me about yourself' },
+                    { role: 'assistant', content: 'I am Plara, an AI assistant...' }
+                ];
+                await window.puterKV.saveChatHistory('test_conv_123', messages);
+                log(`✅ Saved chat history with ${messages.length} messages`, 'success');
+            } catch (error) {
+                log(`❌ Save chat history failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testLoadChatHistory() {
+            log('📥 Testing load chat history...', 'info');
+            
+            try {
+                const messages = await window.puterKV.loadChatHistory('test_conv_123');
+                log(`✅ Loaded ${messages.length} messages`, 'success');
+                messages.slice(0, 2).forEach(msg => {
+                    log(`  ${msg.role}: ${msg.content.substring(0, 50)}...`, 'info');
+                });
+            } catch (error) {
+                log(`❌ Load chat history failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testListConversations() {
+            log('📋 Testing list conversations...', 'info');
+            
+            try {
+                const convs = await window.puterKV.listChatConversations();
+                log(`✅ Found ${convs.length} conversations`, 'success');
+                convs.slice(0, 3).forEach(conv => {
+                    log(`  ${conv.id}: ${conv.messageCount} messages - "${conv.preview}"`, 'info');
+                });
+            } catch (error) {
+                log(`❌ List conversations failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSaveDocMeta() {
+            log('📝 Testing save document metadata...', 'info');
+            
+            try {
+                const metadata = {
+                    title: 'Test Document',
+                    author: 'Plara User',
+                    wordCount: 1500,
+                    tags: ['test', 'demo']
+                };
+                await window.puterKV.saveDocumentMetadata('doc_test_123', metadata);
+                log(`✅ Saved document metadata`, 'success');
+            } catch (error) {
+                log(`❌ Save doc metadata failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testLoadDocMeta() {
+            log('📥 Testing load document metadata...', 'info');
+            
+            try {
+                const metadata = await window.puterKV.loadDocumentMetadata('doc_test_123');
+                log(`✅ Loaded metadata: ${JSON.stringify(metadata, null, 2)}`, 'success');
+            } catch (error) {
+                log(`❌ Load doc metadata failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testListDocMeta() {
+            log('📋 Testing list document metadata...', 'info');
+            
+            try {
+                const docs = await window.puterKV.listDocumentMetadata();
+                log(`✅ Found ${docs.length} documents`, 'success');
+                docs.slice(0, 3).forEach(doc => {
+                    log(`  ${doc.id}: ${doc.title || 'Untitled'}`, 'info');
+                });
+            } catch (error) {
+                log(`❌ List doc metadata failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testTrackEvent() {
+            log('📊 Testing track event...', 'info');
+            
+            try {
+                await window.puterKV.trackEvent('test_click', { button: 'submit', page: 'home' });
+                log('✅ Tracked event "test_click"', 'success');
+                
+                await window.puterKV.trackEvent('test_click', { button: 'cancel', page: 'settings' });
+                log('✅ Tracked another "test_click" event', 'success');
+            } catch (error) {
+                log(`❌ Track event failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testGetAnalytics() {
+            log('📈 Testing get analytics...', 'info');
+            
+            try {
+                const analytics = await window.puterKV.getAnalytics('test_click');
+                log(`✅ Analytics for "test_click": ${analytics.count} events`, 'success');
+                log(`Last event: ${JSON.stringify(analytics.events[analytics.events.length - 1])}`, 'info');
+            } catch (error) {
+                log(`❌ Get analytics failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testGetStats() {
+            log('📊 Testing KV statistics...', 'info');
+            
+            try {
+                const stats = window.puterKV.getStats();
+                log(`✅ KV Statistics:`, 'success');
+                log(`<pre>${JSON.stringify(stats, null, 2)}</pre>`, 'info');
+            } catch (error) {
+                log(`❌ Get stats failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testCache() {
+            log('💨 Testing cache functionality...', 'info');
+            
+            try {
+                // Set with cache
+                await window.puterKV.set('cache_test', 'cached_value');
+                log('Set key with cache', 'info');
+                
+                // Get from cache (should be fast)
+                const start = Date.now();
+                const val = await window.puterKV.get('cache_test');
+                const duration = Date.now() - start;
+                
+                log(`✅ Retrieved from cache in ${duration}ms: "${val}"`, 'success');
+                
+                // Check stats
+                const stats = window.puterKV.getStats();
+                log(`Cache hit rate: ${stats.cacheHitRate}`, 'info');
+            } catch (error) {
+                log(`❌ Cache test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testBatchWrite() {
+            log('⚡ Testing batch write...', 'info');
+            
+            try {
+                // Queue multiple writes
+                for (let i = 0; i < 5; i++) {
+                    window.puterKV.queueWrite(`batch_key_${i}`, `batch_value_${i}`);
+                }
+                log('Queued 5 writes', 'info');
+                
+                // Wait for flush
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                log('✅ Batch writes should be flushed', 'success');
+                
+                // Verify
+                const val = await window.puterKV.get('batch_key_0', { skipCache: true });
+                log(`Verified first key: "${val}"`, 'info');
+            } catch (error) {
+                log(`❌ Batch write failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testExport() {
+            log('💾 Testing export all data...', 'info');
+            
+            try {
+                const data = await window.puterKV.exportAllData();
+                const keys = Object.keys(data);
+                log(`✅ Exported ${keys.length} keys`, 'success');
+                log(`Sample keys: ${keys.slice(0, 5).join(', ')}...`, 'info');
+            } catch (error) {
+                log(`❌ Export failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function runAllTests() {
+            clearResults();
+            log('🚀 Running all tests...', 'info');
+            log('═'.repeat(80), 'info');
+            
+            const tests = [
+                testInit, testSet, testGet, testIncrement, testDecrement, testDelete, testList,
+                testSavePrefs, testLoadPrefs, testGetPref,
+                testSaveChatHistory, testLoadChatHistory, testListConversations,
+                testSaveDocMeta, testLoadDocMeta, testListDocMeta,
+                testTrackEvent, testGetAnalytics, testGetStats,
+                testCache, testBatchWrite, testExport
+            ];
+            
+            for (const test of tests) {
+                await test();
+                await new Promise(r => setTimeout(r, 300));
+            }
+            
+            log('═'.repeat(80), 'info');
+            log('✅ All tests completed', 'success');
+        }
+        
+        // Auto-run init test on load
+        window.addEventListener('load', () => {
+            setTimeout(testInit, 1000);
+        });
+    </script>
+</body>
+</html>

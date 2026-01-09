@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DenialAI Pro - Mortgage Denial Response Platform</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="mortgage-denial-styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    <span class="logo-text">DenialAI</span>
+                    <span class="logo-badge">PRO</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="#" class="nav-item active" data-page="dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="generate">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                        <span>Generate Letter</span>
+                        <span class="badge">AI</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="letters">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <span>All Letters</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="appeals">
+                        <i class="fas fa-rotate-left"></i>
+                        <span>Appeals</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="#" class="nav-item" data-page="compliance">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Compliance</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="lenders">
+                        <i class="fas fa-building-columns"></i>
+                        <span>Lenders</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                        <div class="user-name">John Davis</div>
+                        <div class="user-role">Compliance Officer</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search applications...">
+                    </div>
+                    <button class="header-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content" id="contentArea">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="mortgage-denial-ai-engine.js"></script>
+    <script src="mortgage-compliance-validator.js"></script>
+    <script src="mortgage-denial-storage.js"></script>
+    <script src="mortgage-denial-los-integration.js"></script>
+    <script src="mortgage-denial-app.js"></script>
+    <script src="mortgage-denial-chat-integration.js"></script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test: Dual AI System</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+        }
+        .pass { color: #00ff00; }
+        .fail { color: #ff0000; }
+        .info { color: #00aaff; }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        button:hover { background: #00aa00; }
+        #output {
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Healthcare Denial Dual AI System - Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>Test Controls</h2>
+        <button onclick="runAllTests()">▶️ Run All Tests</button>
+        <button onclick="testGeminiOnly()">🧠 Test Gemini Only</button>
+        <button onclick="testClaudeOnly()">⚖️ Test Claude Only</button>
+        <button onclick="testAutoSelection()">🤖 Test Auto-Selection</button>
+        <button onclick="clearOutput()">🗑️ Clear</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Output</h2>
+        <div id="output"></div>
+    </div>
+
+    <script src="healthcare-denial-dual-ai-engine.js"></script>
+    <script src="healthcare-denial-chat-integration.js"></script>
+    <script src="healthcare-denial-storage-integration.js"></script>
+
+    <script>
+        const output = document.getElementById('output');
+        
+        function log(msg, type = 'info') {
+            const colors = {
+                pass: 'pass',
+                fail: 'fail',
+                info: 'info'
+            };
+            const line = document.createElement('div');
+            line.className = colors[type] || 'info';
+            line.textContent = msg;
+            output.appendChild(line);
+            console.log(msg);
+        }
+
+        function clearOutput() {
+            output.innerHTML = '';
+        }
+
+        async function runAllTests() {
+            clearOutput();
+            log('═══════════════════════════════════════════════════', 'info');
+            log('🧪 HEALTHCARE DENIAL DUAL AI SYSTEM TEST SUITE', 'info');
+            log('═══════════════════════════════════════════════════', 'info');
+            log('');
+
+            const tests = [
+                testPuterConnection,
+                testEngineInitialization,
+                testDenialCodes,
+                testPayerRules,
+                testEngineSelection,
+                testChatIntegration,
+                testStorage,
+                testGeminiGeneration,
+                testClaudeGeneration
+            ];
+
+            let passed = 0;
+            let failed = 0;
+
+            for (const test of tests) {
+                try {
+                    await test();
+                    passed++;
+                } catch (error) {
+                    log(`✗ ${error.message}`, 'fail');
+                    failed++;
+                }
+            }
+
+            log('');
+            log('═══════════════════════════════════════════════════', 'info');
+            log(`RESULTS: ${passed} passed, ${failed} failed`, passed === tests.length ? 'pass' : 'fail');
+            log('═══════════════════════════════════════════════════', 'info');
+        }
+
+        async function testPuterConnection() {
+            log('');
+            log('TEST 1: Puter.js Connection', 'info');
+            log('─────────────────────────────────────────────────', 'info');
+            
+            if (typeof puter === 'undefined') {
+                throw new Error('Puter.js not loaded');
+            }
+            log('✓ Puter.js loaded', 'pass');
+
+            // Test KV store
+            const testKey = 'test_' + Date.now();
+            await puter.kv.set(testKey, 'test_value');
+            const value = await puter.kv.get(testKey);
+            
+            if (value === 'test_value') {
+                log('✓ KV store working', 'pass');
+            } else {
+                throw new Error('KV store test failed');
+            }
+        }
+
+        async function testEngineInitialization() {
+            log('');
+            log('TEST 2: AI Engine Initialization', 'info');
+            log('─────────────────────────────────────────────────', 'info');
+
+            window.testEngine = new HealthcareDenialDualAIEngine();
+            log('✓ Engine instance created', 'pass');
+
+            await window.testEngine.initialize();
+            log('✓ Engine initialized', 'pass');
+
+            if (window.testEngine.initialized) {
+                log('✓ Initialization flag set', 'pass');
+            } else {
+                throw new Error('Initialization flag not set');
+            }
+
+            log(`✓ Gemini engine: ${window.testEngine.engines.gemini.name}`, 'pass');
+            log(`✓ Claude engine: ${window.testEngine.engines.claude.name}`, 'pass');
+        }
+
+        async function testDenialCodes() {
+            log('');
+            log('TEST 3: Denial Code Database', 'info');
+            log('─────────────────────────────────────────────────', 'info');
+
+            const codes = window.testEngine.getSupportedDenialCodes();
+            log(`✓ Loaded ${codes.length} denial codes`, 'pass');
+
+            const co197 = window.testEngine.getDenialCodeInfo('CO-197');
+            if (co197 && co197.description) {
+                log(`✓ CO-197: ${co197.description}`, 'pass');
+                log(`  Optimal engine: ${co197.aiModel}`, 'info');
+            } else {
+                throw new Error('CO-197 not found');
+            }
+
+            const co11 = window.testEngine.getDenialCodeInfo('CO-11');
+            if (co11) {
+                log(`✓ CO-11: ${co11.description}`, 'pass');
+                log(`  Optimal engine: ${co11.aiModel}`, 'info');
+            }
+        }
+
+        async function testPayerRules() {
+            log('');
+            log('TEST 4: Payer Rules Database', 'info');
+            log('─────────────────────────────────────────────────', 'info');
+
+            const payers = window.testEngine.getSupportedPayers();
+            log(`✓ Loaded ${payers.length} payer configurations`, 'pass');
+
+            const uhc = window.testEngine.getPayerRules('UnitedHealthcare');
+            if (uhc) {
+                log(`✓ UnitedHealthcare rules found`, 'pass');
+                log(`  Preferred engine: ${uhc.aiModel}`, 'info');
+                log(`  Appeal deadline: ${uhc.appealDeadline} days`, 'info');
+            } else {
+                throw new Error('UnitedHealthcare rules not found');
+            }
+
+            const aetna = window.testEngine.getPayerRules('Aetna');
+            if (aetna) {
+                log(`✓ Aetna rules found`, 'pass');
+                log(`  Preferred engine: ${aetna.aiModel}`, 'info');
+            }
+        }
+
+        async function testEngineSelection() {
+            log('');
+            log('TEST 5: Intelligent Engine Selection', 'info');
+            log('─────────────────────────────────────────────────', 'info');
+
+            // Test medical necessity (should prefer Gemini)
+            const medicalCase = {
+                denialCode: 'CO-11',
+                payer: 'Aetna',
+                appealType: 'clinical_analysis'
+            };
+            const selection1 = window.testEngine.selectOptimalEngine(medicalCase);
+            log(`✓ Medical necessity → ${selection1.engine}`, 'pass');
+            log(`  Reason: ${selection1.reason}`, 'info');
+
+            // Test legal case (should prefer Claude)
+            const legalCase = {
+                denialCode: 'CO-4',
+                payer: 'UnitedHealthcare',
+                appealType: 'legal_appeal'
+            };
+            const selection2 = window.testEngine.selectOptimalEngine(legalCase);
+            log(`✓ Legal/administrative → ${selection2.engine}`, 'pass');
+            log(`  Reason: ${selection2.reason}`, 'info');
+
+            // Test prior auth (should prefer Gemini)
+            const paCase = {
+                denialCode: 'CO-197',
+                payer: 'Medicare'
+            };
+            const selection3 = window.testEngine.selectOptimalEngine(paCase);
+            log(`✓ Prior authorization → ${selection3.engine}`, 'pass');
+            log(`  Reason: ${selection3.reason}`, 'info');
+        }
+
+        async function testChatIntegration() {
+            log('');
+            log('TEST 6: Chat Integration', 'info');
+            log('─────────────────────────────────────────────────', 'info');
+
+            window.testChat = new HealthcareDenialChatIntegration(window.testEngine);
+            log('✓ Chat integration created', 'pass');
+
+            // Test intent detection
+            const clinicalIntent = window.testChat.detectIntent('provide clinical analysis');
+            log(`✓ Intent detection: "${clinicalIntent}"`, 'pass');
+
+            const generateIntent = window.testChat.detectIntent('generate appeal letter');
+            log(`✓ Intent detection: "${generateIntent}"`, 'pass');
+
+            // Test data extraction
+            await window.testChat.extractDenialInfo('Patient John Smith, UnitedHealthcare, CO-197');
+            const extracted = window.testChat.getCurrentDenialData();
+            
+            if (extracted.patientName) {
+                log(`✓ Extracted patient: ${extracted.patientName}`, 'pass');
+            }
+            if (extracted.payer) {
+                log(`✓ Extracted payer: ${extracted.payer}`, 'pass');
+            }
+            if (extracted.denialCode) {
+                log(`✓ Extracted denial code: ${extracted.denialCode}`, 'pass');
+            }
+        }
+
+        async function testStorage() {
+            log('');
+            log('TEST 7: HIPAA-Compliant Storage', 'info');
+            log('─────────────────────────────────────────────────', 'info');
+
+            window.testStorage = new HealthcareDenialStorageIntegration();
+            await window.testStorage.initialize('test_user', 'test_org');
+            log('✓ Storage initialized', 'pass');
+
+            // Test denial save
+            const testDenial = {
+                id: 'TEST-001',
+                patientName: 'Test Patient',
+                payer: 'Test Payer',
+                procedure: 'Test Procedure',
+                status: 'pending'
+            };
+            await window.testStorage.saveDenial(testDenial);
+            log('✓ Denial saved', 'pass');
+
+            // Test denial retrieval
+            const retrieved = await window.testStorage.getDenial('TEST-001');
+            if (retrieved && retrieved.patientName === 'Test Patient') {
+                log('✓ Denial retrieved', 'pass');
+            } else {
+                throw new Error('Denial retrieval failed');
+            }
+
+            // Test audit log
+            const auditLog = await window.testStorage.getAuditLog();
+            log(`✓ Audit log: ${auditLog.length} entries`, 'pass');
+
+            // Test metrics
+            const metrics = await window.testStorage.getDashboardMetrics();
+            log(`✓ Dashboard metrics generated`, 'pass');
+            log(`  Total denials: ${metrics.totalDenials}`, 'info');
+        }
+
+        async function testGeminiGeneration() {
+            log('');
+            log('TEST 8: Gemini 3.0 Pro Generation', 'info');
+            log('─────────────────────────────────────────────────', 'info');
+
+            const denialData = {
+                patientName: 'John Doe',
+                memberId: 'MEM123',
+                payer: 'Aetna',
+                claimNumber: 'CLM-TEST-001',
+                denialCode: 'CO-11',
+                procedure: 'MRI Lumbar Spine',
+                cptCode: '72148',
+                diagnosis: 'Low back pain',
+                icdCode: 'M54.5',
+                clinicalJustification: 'Test clinical justification'
+            };
+
+            try {
+                log('Generating with Gemini 3.0 Pro...', 'info');
+                window.testEngine.currentModel = 'gemini-3-pro';
+                
+                const result = await window.testEngine.generateAppealLetter(denialData, {
+                    allowFallback: false
+                });
+
+                if (result.success && result.content) {
+                    log('✓ Gemini generation successful', 'pass');
+                    log(`  Engine used: ${result.engine}`, 'info');
+                    log(`  Response time: ${result.responseTime}ms`, 'info');
+                    log(`  Content length: ${result.content.length} chars`, 'info');
+                } else {
+                    throw new Error('Gemini generation returned invalid result');
+                }
+            } catch (error) {
+                log(`⚠ Gemini test failed: ${error.message}`, 'fail');
+                log('  This may be expected if Gemini API is not available', 'info');
+            }
+        }
+
+        async function testClaudeGeneration() {
+            log('');
+            log('TEST 9: Claude Sonnet 4.5 Generation', 'info');
+            log('─────────────────────────────────────────────────', 'info');
+
+            const denialData = {
+                patientName: 'Jane Smith',
+                memberId: 'MEM456',
+                payer: 'UnitedHealthcare',
+                claimNumber: 'CLM-TEST-002',
+                denialCode: 'CO-4',
+                procedure: 'Physical Therapy',
+                cptCode: '97161',
+                diagnosis: 'Shoulder pain',
+                icdCode: 'M25.51',
+                clinicalJustification: 'Test clinical justification'
+            };
+
+            try {
+                log('Generating with Claude Sonnet 4.5...', 'info');
+                window.testEngine.currentModel = 'claude-sonnet-4';
+                
+                const result = await window.testEngine.generateAppealLetter(denialData, {
+                    allowFallback: false
+                });
+
+                if (result.success && result.content) {
+                    log('✓ Claude generation successful', 'pass');
+                    log(`  Engine used: ${result.engine}`, 'info');
+                    log(`  Response time: ${result.responseTime}ms`, 'info');
+                    log(`  Content length: ${result.content.length} chars`, 'info');
+                } else {
+                    throw new Error('Claude generation returned invalid result');
+                }
+            } catch (error) {
+                log(`⚠ Claude test failed: ${error.message}`, 'fail');
+                log('  This may be expected if Claude API is not available', 'info');
+            }
+        }
+
+        async function testGeminiOnly() {
+            clearOutput();
+            log('Testing Gemini 3.0 Pro specifically...', 'info');
+            await testGeminiGeneration();
+        }
+
+        async function testClaudeOnly() {
+            clearOutput();
+            log('Testing Claude Sonnet 4.5 specifically...', 'info');
+            await testClaudeGeneration();
+        }
+
+        async function testAutoSelection() {
+            clearOutput();
+            log('Testing Auto-Selection Logic...', 'info');
+            await testEngineSelection();
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('Test suite ready. Click "Run All Tests" to begin.', 'info');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

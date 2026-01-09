@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plara - Cloud Storage (Puter FS)</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* FS Page specific styles */
+    .fs-container{max-width:1000px;margin:24px auto;padding:0 16px}
+    .fs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .fs-title{font-family:'Playfair Display',serif;font-size:28px}
+    .fs-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+    .fs-tab{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);cursor:pointer}
+    .fs-tab.active{background:linear-gradient(135deg,#2563eb33,#10b98133);border-color:rgba(37,99,235,0.4)}
+    .fs-sections{margin-top:12px}
+    .fs-section{display:none}
+    .fs-section.active{display:block}
+    .fs-actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+    .fs-run{padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);cursor:pointer}
+    .fs-run:hover{background:rgba(255,255,255,0.12)}
+    .fs-form-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+    .fs-form-row input{min-width:260px}
+    .fs-log{margin-top:12px;padding:10px;border-radius:8px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.12);max-height:260px;overflow:auto;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;font-size:13px;line-height:1.45}
+    .fs-code{white-space:pre-wrap;color:#cbd5e1}
+  </style>
+</head>
+<body>
+  <nav class="top-navbar">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor" />
+        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span class="logo-text">plara</span>
+    </div>
+  </nav>
+
+  <main class="fs-container">
+    <div class="fs-header">
+      <div class="fs-title">Cloud Storage API (Puter FS)</div>
+      <div class="fs-actions">
+        <button id="btnClearLog" class="fs-run">Clear Log</button>
+      </div>
+    </div>
+
+    <div class="fs-tabs" id="fsTabs">
+      <button class="fs-tab active" data-section="write">Write</button>
+      <button class="fs-tab" data-section="read">Read</button>
+      <button class="fs-tab" data-section="mkdir">Mkdir</button>
+      <button class="fs-tab" data-section="readdir">Readdir</button>
+      <button class="fs-tab" data-section="rename">Rename</button>
+      <button class="fs-tab" data-section="copy">Copy</button>
+      <button class="fs-tab" data-section="move">Move</button>
+      <button class="fs-tab" data-section="stat">Stat</button>
+      <button class="fs-tab" data-section="delete">Delete</button>
+      <button class="fs-tab" data-section="getreadurl">GetReadURL</button>
+      <button class="fs-tab" data-section="upload">Upload</button>
+    </div>
+
+    <div class="fs-sections">
+      <section class="fs-section active" id="sec-write">
+        <div class="fs-form-row">
+          <input id="w-path" placeholder="Path e.g. hello.txt" />
+          <input id="w-data" placeholder="Data e.g. Hello, world!" />
+          <label><input type="checkbox" id="w-overwrite" checked /> overwrite</label>
+          <label><input type="checkbox" id="w-dedupe" /> dedupeName</label>
+          <label><input type="checkbox" id="w-create" /> createMissingParents</label>
+        </div>
+        <div class="fs-actions">
+          <button id="run-write" class="fs-run">Write File</button>
+          <button id="run-write-random" class="fs-run">Write Random File</button>
+        </div>
+        <div class="fs-code">puter.fs.write(path, data, { overwrite, dedupeName, createMissingParents })</div>
+      </section>
+
+      <section class="fs-section" id="sec-read">
+        <div class="fs-form-row">
+          <input id="r-path" placeholder="Path to read e.g. hello.txt" />
+        </div>
+        <div class="fs-actions">
+          <button id="run-read" class="fs-run">Read File</button>
+        </div>
+        <div class="fs-code">const blob = await puter.fs.read(path); const text = await blob.text();</div>
+      </section>
+
+      <section class="fs-section" id="sec-mkdir">
+        <div class="fs-form-row">
+          <input id="mk-path" placeholder="Directory path e.g. my-dir" />
+          <label><input type="checkbox" id="mk-overwrite" /> overwrite</label>
+          <label><input type="checkbox" id="mk-dedupe" /> dedupeName</label>
+          <label><input type="checkbox" id="mk-create" /> createMissingParents</label>
+        </div>
+        <div class="fs-actions">
+          <button id="run-mkdir" class="fs-run">Create Directory</button>
+        </div>
+        <div class="fs-code">puter.fs.mkdir(path, { overwrite, dedupeName, createMissingParents })</div>
+      </section>
+
+      <section class="fs-section" id="sec-readdir">
+        <div class="fs-form-row">
+          <input id="rd-path" placeholder="Directory path e.g. ./ or my-dir" />
+        </div>
+        <div class="fs-actions">
+          <button id="run-readdir" class="fs-run">List Directory</button>
+        </div>
+        <div class="fs-code">const items = await puter.fs.readdir(path)</div>
+      </section>
+
+      <section class="fs-section" id="sec-rename">
+        <div class="fs-form-row">
+          <input id="rn-path" placeholder="Source path e.g. hello.txt" />
+          <input id="rn-new" placeholder="New name e.g. hello-world.txt" />
+        </div>
+        <div class="fs-actions">
+          <button id="run-rename" class="fs-run">Rename</button>
+        </div>
+        <div class="fs-code">await puter.fs.rename(path, newName)</div>
+      </section>
+
+      <section class="fs-section" id="sec-copy">
+        <div class="fs-form-row">
+          <input id="cp-src" placeholder="Source path e.g. hello.txt" />
+          <input id="cp-dst" placeholder="Destination dir or file e.g. my-dir or my-dir/hello.txt" />
+          <label><input type="checkbox" id="cp-overwrite" /> overwrite</label>
+          <label><input type="checkbox" id="cp-dedupe" /> dedupeName</label>
+          <input id="cp-newname" placeholder="Optional newName e.g. hello2.txt" />
+        </div>
+        <div class="fs-actions">
+          <button id="run-copy" class="fs-run">Copy</button>
+        </div>
+        <div class="fs-code">await puter.fs.copy(source, destination, { overwrite, dedupeName, newName })</div>
+      </section>
+
+      <section class="fs-section" id="sec-move">
+        <div class="fs-form-row">
+          <input id="mv-src" placeholder="Source path e.g. hello.txt" />
+          <input id="mv-dst" placeholder="Destination dir or file e.g. my-dir or my-dir/hello.txt" />
+          <label><input type="checkbox" id="mv-overwrite" /> overwrite</label>
+          <label><input type="checkbox" id="mv-create" /> createMissingParents</label>
+        </div>
+        <div class="fs-actions">
+          <button id="run-move" class="fs-run">Move</button>
+        </div>
+        <div class="fs-code">await puter.fs.move(source, destination, { overwrite, createMissingParents })</div>
+      </section>
+
+      <section class="fs-section" id="sec-stat">
+        <div class="fs-form-row">
+          <input id="st-path" placeholder="Path e.g. hello.txt" />
+        </div>
+        <div class="fs-actions">
+          <button id="run-stat" class="fs-run">Stat</button>
+        </div>
+        <div class="fs-code">const info = await puter.fs.stat(path)</div>
+      </section>
+
+      <section class="fs-section" id="sec-delete">
+        <div class="fs-form-row">
+          <input id="dl-paths" placeholder="Path(s) to delete e.g. hello.txt or my-dir" />
+          <label><input type="checkbox" id="dl-recursive" checked /> recursive</label>
+          <label><input type="checkbox" id="dl-descendants" /> descendantsOnly</label>
+        </div>
+        <div class="fs-actions">
+          <button id="run-delete" class="fs-run">Delete</button>
+        </div>
+        <div class="fs-code">await puter.fs.delete(paths, { recursive, descendantsOnly })</div>
+      </section>
+
+      <section class="fs-section" id="sec-getreadurl">
+        <div class="fs-form-row">
+          <input id="gr-path" placeholder="Path e.g. hello.txt" />
+          <input id="gr-exp" type="number" placeholder="expiresIn seconds (optional)" />
+        </div>
+        <div class="fs-actions">
+          <button id="run-getreadurl" class="fs-run">Generate Read URL</button>
+        </div>
+        <div class="fs-code">const url = await puter.fs.getReadURL(path, expiresIn)</div>
+      </section>
+
+      <section class="fs-section" id="sec-upload">
+        <div class="fs-form-row">
+          <input type="file" id="up-input" multiple />
+          <input id="up-dir" placeholder="Destination directory (optional)" />
+          <label><input type="checkbox" id="up-overwrite" /> overwrite</label>
+          <label><input type="checkbox" id="up-dedupe" /> dedupeName</label>
+          <label><input type="checkbox" id="up-create" /> createMissingParents</label>
+        </div>
+        <div class="fs-actions">
+          <button id="run-upload" class="fs-run">Upload</button>
+        </div>
+        <div class="fs-code">await puter.fs.upload(FileList|Array<File>, dirPath, { overwrite, dedupeName, createMissingParents })</div>
+      </section>
+    </div>
+
+    <div id="fsLog" class="fs-log"></div>
+  </main>
+
+  <script src="https://js.puter.com/v2/"></script>
+  <script src="fs.js"></script>
+</body>
+</html>

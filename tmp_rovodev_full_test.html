@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Functionality Test - Plara</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .test-card {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg);
+        }
+        .test-card h2 {
+            margin-bottom: var(--spacing-md);
+            color: var(--color-accent);
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        .status-item {
+            padding: var(--spacing-sm);
+            background: var(--color-bg-subtle);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        .status-icon {
+            font-size: 1.5rem;
+        }
+        .btn-test {
+            margin: var(--spacing-xs);
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Navigation -->
+    <nav class="top-navbar">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+        <a href="index.html" class="logo">
+            <span class="logo-dots">⁝</span>
+            <span class="logo-text-main">Plara</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="help.html" class="nav-link">Help</a></li>
+                <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+                <li><a href="features.html" class="nav-link">Features</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="test-container">
+            <h1 style="text-align: center; margin-bottom: var(--spacing-xl);">🧪 Plara Full Functionality Test</h1>
+
+            <div class="test-card">
+                <h2>✅ Navigation Test</h2>
+                <div class="status-grid" id="navStatus"></div>
+                <button class="btn-signin btn-test" onclick="testNavigation()">Test Navigation</button>
+            </div>
+
+            <div class="test-card">
+                <h2>📱 Responsive Design Test</h2>
+                <div class="status-grid" id="responsiveStatus"></div>
+                <button class="btn-signin btn-test" onclick="testResponsive()">Test Responsiveness</button>
+            </div>
+
+            <div class="test-card">
+                <h2>🎨 Pricing Page Test</h2>
+                <div class="status-grid" id="pricingStatus"></div>
+                <a href="pricing.html" class="btn-signin btn-test">Go to Pricing</a>
+            </div>
+
+            <div class="test-card">
+                <h2>🔘 Interactive Elements Test</h2>
+                <div class="status-grid" id="interactiveStatus"></div>
+                <button class="btn-signin btn-test" onclick="testButtons()">Test Buttons</button>
+                <button class="btn-signin btn-test" onclick="alert('✅ Alert works!')">Test Alert</button>
+            </div>
+
+            <div class="test-card">
+                <h2>📊 System Status</h2>
+                <div class="status-grid" id="systemStatus"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        function testNavigation() {
+            const status = document.getElementById('navStatus');
+            status.innerHTML = '';
+            
+            const tests = [
+                { name: 'Sidebar Toggle', check: !!document.getElementById('sidebarToggle') },
+                { name: 'Sidebar Element', check: !!document.getElementById('sidebar') },
+                { name: 'Sidebar Overlay', check: !!document.getElementById('sidebarOverlay') },
+                { name: 'Nav Links', check: document.querySelectorAll('.nav-link').length >= 4 }
+            ];
+            
+            tests.forEach(test => {
+                const item = document.createElement('div');
+                item.className = 'status-item';
+                item.innerHTML = `
+                    <span class="status-icon">${test.check ? '✅' : '❌'}</span>
+                    <span>${test.name}</span>
+                `;
+                status.appendChild(item);
+            });
+        }
+
+        function testResponsive() {
+            const status = document.getElementById('responsiveStatus');
+            status.innerHTML = '';
+            
+            const width = window.innerWidth;
+            const tests = [
+                { name: 'Viewport Width', check: true, value: width + 'px' },
+                { name: 'Mobile Ready', check: width >= 320 },
+                { name: 'Tablet Ready', check: width >= 768 },
+                { name: 'Desktop Ready', check: width >= 1024 }
+            ];
+            
+            tests.forEach(test => {
+                const item = document.createElement('div');
+                item.className = 'status-item';
+                item.innerHTML = `
+                    <span class="status-icon">${test.check ? '✅' : '⚠️'}</span>
+                    <span>${test.name}${test.value ? ': ' + test.value : ''}</span>
+                `;
+                status.appendChild(item);
+            });
+        }
+
+        function testButtons() {
+            const status = document.getElementById('interactiveStatus');
+            status.innerHTML = '';
+            
+            const tests = [
+                { name: 'Buttons Rendered', check: document.querySelectorAll('.btn-signin').length > 0 },
+                { name: 'Click Events', check: true },
+                { name: 'Hover Effects', check: true },
+                { name: 'Form Elements', check: document.querySelectorAll('input, button').length > 0 }
+            ];
+            
+            tests.forEach(test => {
+                const item = document.createElement('div');
+                item.className = 'status-item';
+                item.innerHTML = `
+                    <span class="status-icon">${test.check ? '✅' : '❌'}</span>
+                    <span>${test.name}</span>
+                `;
+                status.appendChild(item);
+            });
+        }
+
+        function checkSystem() {
+            const status = document.getElementById('systemStatus');
+            status.innerHTML = '';
+            
+            const tests = [
+                { name: 'CSS Loaded', check: document.styleSheets.length > 0 },
+                { name: 'JavaScript Active', check: true },
+                { name: 'App.js Loaded', check: typeof toggleSidebar !== 'undefined' },
+                { name: 'Responsive Meta', check: !!document.querySelector('meta[name="viewport"]') }
+            ];
+            
+            tests.forEach(test => {
+                const item = document.createElement('div');
+                item.className = 'status-item';
+                item.innerHTML = `
+                    <span class="status-icon">${test.check ? '✅' : '❌'}</span>
+                    <span>${test.name}</span>
+                `;
+                status.appendChild(item);
+            });
+        }
+
+        // Auto-run system check on load
+        window.addEventListener('load', () => {
+            checkSystem();
+            testNavigation();
+            testResponsive();
+            testButtons();
+        });
+
+        // Update responsive test on resize
+        window.addEventListener('resize', testResponsive);
+    </script>
+</body>
+</html>

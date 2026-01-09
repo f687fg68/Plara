@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Inline Tools Demo - Editor.js</title>
+    <script src="https://js.puter.com/v2/"></script>
+    
+    <!-- Editor.js Core -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script>
+    
+    <link rel="stylesheet" href="editorjs-inline-tools-enhanced.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tool-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .tool-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .tool-desc {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .editor-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .editor-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-header h2 {
+            margin: 0;
+        }
+
+        .save-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .save-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .editor-body {
+            padding: 30px;
+            min-height: 400px;
+        }
+
+        #editorjs {
+            background: white;
+        }
+
+        .ce-block__content {
+            max-width: 100%;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .instructions h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        .instructions code {
+            background: #f5f7ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 5px;
+        }
+
+        .output-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .output-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>✨ Enhanced Inline Tools Demo</h1>
+            <p>Powerful AI-powered inline editing features for Editor.js</p>
+            <div>
+                <span class="badge">🌐 Translation</span>
+                <span class="badge">✨ AI Enhancement</span>
+                <span class="badge">🎨 Multi-Color Highlights</span>
+                <span class="badge">📊 Statistics</span>
+                <span class="badge">🔍 Definitions</span>
+                <span class="badge">📋 Citations</span>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>🚀 How to Use the New Inline Tools</h3>
+            <ol>
+                <li>Type or paste some text into the editor below</li>
+                <li><strong>Select any text</strong> to reveal the inline toolbar</li>
+                <li>You'll see new icons in the toolbar:
+                    <ul>
+                        <li><code>🌐</code> - Translate selected text to 50+ languages</li>
+                        <li><code>✨</code> - Enhance text with AI (improve, formal, legal, etc.)</li>
+                        <li><code>🎨</code> - Multi-color highlights (8 colors)</li>
+                        <li><code>📋</code> - Format as legal citation</li>
+                        <li><code>📊</code> - Show text statistics (word count, reading time, etc.)</li>
+                        <li><code>🔍</code> - Get instant definition of term</li>
+                    </ul>
+                </li>
+                <li>Click any tool icon to use that feature!</li>
+            </ol>
+        </div>
+
+        <!-- Tools Overview -->
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="tool-icon">🌐</div>
+                <div class="tool-name">Inline Translation</div>
+                <div class="tool-desc">Instantly translate selected text to 50+ languages. Perfect for multilingual documents.</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-icon">✨</div>
+                <div class="tool-name">AI Enhancement</div>
+                <div class="tool-desc">Improve writing, make formal, simplify, expand, or convert to legal tone using AI.</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-icon">🎨</div>
+                <div class="tool-name">Multi-Color Highlights</div>
+                <div class="tool-desc">Choose from 8 highlight colors: yellow, green, blue, pink, purple, orange, red, gray.</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-icon">📋</div>
+                <div class="tool-name">Legal Citation</div>
+                <div class="tool-desc">Format selected text as a legal or regulatory citation with proper styling.</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-icon">📊</div>
+                <div class="tool-name">Text Statistics</div>
+                <div class="tool-desc">View word count, character count, reading time, sentences, and paragraphs.</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-icon">🔍</div>
+                <div class="tool-name">Quick Define</div>
+                <div class="tool-desc">Get instant AI-powered definitions for legal and regulatory terms.</div>
+            </div>
+        </div>
+
+        <!-- Editor -->
+        <div class="editor-card">
+            <div class="editor-header">
+                <h2>📝 Interactive Editor</h2>
+                <button class="save-btn" onclick="saveContent()">💾 Save & Show JSON</button>
+            </div>
+            <div class="editor-body">
+                <div id="editorjs"></div>
+            </div>
+        </div>
+
+        <!-- Output -->
+        <div class="output-section" id="outputSection" style="display: none;">
+            <h3>📄 Saved Content (JSON)</h3>
+            <pre id="output"></pre>
+        </div>
+    </div>
+
+    <script src="regulatory-translation-backend.js"></script>
+    <script src="editorjs-inline-tools-enhanced.js"></script>
+    
+    <script>
+        let editor;
+
+        async function initEditor() {
+            console.log('🚀 Initializing Enhanced Inline Tools Demo...');
+
+            // Initialize translation backend
+            if (window.RegulatoryTranslationBackend) {
+                window.regulatoryTranslation = new RegulatoryTranslationBackend();
+                await window.regulatoryTranslation.initialize();
+                console.log('✅ Translation backend initialized');
+            }
+
+            // Initialize Editor.js with enhanced tools
+            editor = new EditorJS({
+                holder: 'editorjs',
+                autofocus: true,
+                placeholder: 'Start typing... Select text to see the enhanced inline tools!',
+                
+                tools: {
+                    header: {
+                        class: Header,
+                        inlineToolbar: ['link', 'bold', 'italic', 'inlineTranslate', 'inlineAIEnhance', 'highlightPlus', 'citation'],
+                    },
+                    list: {
+                        class: List,
+                        inlineToolbar: true,
+                    },
+                    quote: {
+                        class: Quote,
+                        inlineToolbar: true,
+                    },
+                    marker: Marker,
+                    inlineCode: InlineCode,
+                    
+                    // Enhanced inline tools
+                    inlineTranslate: InlineTranslate,
+                    inlineAIEnhance: InlineAIEnhance,
+                    highlightPlus: InlineHighlightPlus,
+                    citation: InlineCitation,
+                    stats: InlineStats,
+                    define: InlineDefine
+                },
+
+                inlineToolbar: ['link', 'marker', 'bold', 'italic', 'inlineTranslate', 'inlineAIEnhance', 'highlightPlus', 'citation', 'stats', 'define'],
+
+                data: {
+                    blocks: [
+                        {
+                            type: 'header',
+                            data: {
+                                text: 'Regulatory Compliance Notice',
+                                level: 2
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'This is a sample regulatory document. <b>Select any text</b> to see the enhanced inline tools in action!'
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'Try these features:'
+                            }
+                        },
+                        {
+                            type: 'list',
+                            data: {
+                                style: 'unordered',
+                                items: [
+                                    'Select text and click 🌐 to translate to Spanish, French, Chinese, or 50+ other languages',
+                                    'Select text and click ✨ to improve writing, make formal, or convert to legal tone',
+                                    'Select text and click 🎨 to highlight with different colors',
+                                    'Select text and click 📊 to see word count and statistics',
+                                    'Select a term and click 🔍 to get its definition',
+                                    'Select legal references and click 📋 to format as citations'
+                                ]
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'Example regulatory text: "Pursuant to Section 12(b) of the Securities Exchange Act of 1934, we hereby provide notice of non-compliance with filing requirements under Regulation S-K, Item 405."'
+                            }
+                        },
+                        {
+                            type: 'paragraph',
+                            data: {
+                                text: 'All features are powered by AI through Puter.js and are completely free to use!'
+                            }
+                        }
+                    ]
+                },
+
+                onReady: () => {
+                    console.log('✅ Editor.js ready with enhanced inline tools!');
+                }
+            });
+        }
+
+        async function saveContent() {
+            try {
+                const outputData = await editor.save();
+                console.log('Saved data:', outputData);
+                
+                const outputSection = document.getElementById('outputSection');
+                const output = document.getElementById('output');
+                
+                output.textContent = JSON.stringify(outputData, null, 2);
+                outputSection.style.display = 'block';
+                
+                // Scroll to output
+                outputSection.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                console.error('Save failed:', error);
+                alert('Failed to save content');
+            }
+        }
+
+        // Global notification function
+        window.showNotification = function(message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${message}`);
+            
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 100000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize when ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initEditor);
+        } else {
+            initEditor();
+        }
+    </script>
+</body>
+</html>

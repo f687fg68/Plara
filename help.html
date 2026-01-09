@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help Center - Plara</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="top-navbar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+    <a href="index.html" class="logo">
+      <span class="logo-dots">⁝</span>
+      <span class="logo-text-main">Plara</span>
+    </a>
+  </nav>
+
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="help.html" class="nav-link active">Help</a></li>
+        <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+        <li><a href="features.html" class="nav-link">🤖 Features</a></li>
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="auth-section">
+        <span class="auth-status">Not signed in</span>
+        <button class="btn-signin" id="signinBtn">Sign in</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <div style="text-align: center; margin-bottom: var(--spacing-3xl); animation: fadeInUp 0.8s ease-out;">
+      <h1 class="hero-title" style="margin-bottom: var(--spacing-md);">How can we help?</h1>
+
+      <!-- Credits How-To + Video -->
+      <section class="input-box" style="max-width:900px;margin:12px auto 24px;text-align:left;">
+        <h2 style="font-size:1.1rem;font-weight:700;color:#111827;margin-bottom:8px;">How to add more credits</h2>
+        <p style="color:#374151;margin-bottom:12px;">Watch this short walkthrough. It shows the steps to purchase and
+          apply additional credits in Plara.</p>
+        <div style="border:1px solid #e5e7eb;border-radius:10px;padding:10px;background:#fff;">
+          <video id="creditsVideo" controls
+            style="width:100%;max-height:60vh;background:#000;border-radius:8px;"></video>
+          <div id="creditsVideoStatus" style="margin-top:6px;color:#6b7280;font-size:13px;">Preparing video...</div>
+        </div>
+      </section>
+
+      <!-- Search Bar -->
+      <div class="input-container" style="margin: 0 auto;">
+        <div class="input-box" style="display: flex; align-items: center; gap: 10px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="color: var(--color-text-muted);">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="helpSearchInput" class="task-input" placeholder="Ask Claude how to use Plara..."
+            style="margin-bottom: 0;">
+        </div>
+        <div id="helpAiOutput" class="input-box"
+          style="display:none; margin: 20px auto 0; text-align: left; max-width: 800px; line-height: 1.6; border-left: 4px solid var(--color-primary); background: #f8fafc;">
+          <div id="helpAiStatus" style="font-size: 0.8rem; color: #6b7280; margin-bottom: 8px; font-style: italic;">
+            Claude is thinking...</div>
+          <div id="helpAiContent" style="color: #1f2937;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div style="width: 100%; max-width: 800px; display: grid; gap: var(--spacing-lg);">
+
+      <!-- FAQ Item -->
+      <div class="input-box" style="padding: var(--spacing-lg);">
+        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: var(--spacing-sm);">How does Plara use
+          AI?</h3>
+        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+          Plara leverages advanced models like Gemini 3.0 Pro and Claude Sonnet to understand your requests,
+          generate content, and perform complex analysis of documents.
+        </p>
+      </div>
+
+      <div class="input-box" style="padding: var(--spacing-lg);">
+        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: var(--spacing-sm);">Is my data secure?
+        </h3>
+        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+          Yes. We prioritize data privacy and security. All documents are processed securely and we do not
+          train our models on your private data without consent.
+        </p>
+      </div>
+
+      <div class="input-box" style="padding: var(--spacing-lg);">
+        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: var(--spacing-sm);">Can I cancel anytime?
+        </h3>
+        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+          Absolutely. You can manage your subscription directly from the dashboard and cancel at any time.
+          Your access will continue until the end of the billing period.
+        </p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="https://js.puter.com/v2/"></script>
+  <script src="app.js"></script>
+  <script>
+    (async function () {
+      // Video Logic
+      const status = document.getElementById('creditsVideoStatus');
+      const video = document.getElementById('creditsVideo');
+      const videoPath = 'Screen Recording 2026-01-06 at 00.29.23.mp4';
+
+      try {
+        if (status) status.textContent = 'Loading video...';
+        video.src = videoPath;
+        video.oncanplay = () => { if (status) status.textContent = 'Ready'; };
+        video.onerror = async () => {
+          if (window.puter && puter.fs) {
+            try {
+              const fileData = await puter.fs.readFile(videoPath);
+              const blob = fileData instanceof Blob ? fileData : new Blob([fileData]);
+              const url = URL.createObjectURL(blob);
+              video.src = url;
+              if (status) status.textContent = 'Ready (Puter FS)';
+            } catch (e) { if (status) status.textContent = 'Video file not found.'; }
+          } else { if (status) status.textContent = 'Unable to load video.'; }
+        };
+      } catch (err) { if (status) status.textContent = 'Error initializing video player.'; }
+
+      // AI Help Search Logic
+      const helpInput = document.getElementById('helpSearchInput');
+      const helpOutput = document.getElementById('helpAiOutput');
+      const helpStatus = document.getElementById('helpAiStatus');
+      const helpContent = document.getElementById('helpAiContent');
+
+      const SYSTEM_HELP_PROMPT = `You are the Plara Help Assistant (Claude-powered). 
+      Your role is to help users understand how to use the Plara platform. 
+      Answer questions clearly and concisely based on the following features:
+      - AI Chat Interface: Users can ask queries, generate documents, and attach files.
+      - Document Editor: An A4 persistent editor for drafting and refining content.
+      - AI Models: Access to Gemini 3.0 Pro, Claude 3.5 Sonnet, and more.
+      - Credit System: Users purchase and apply credits for AI tasks.
+      - Workspaces: Organized folders for projects.
+      If you don't know an answer, suggest they contact support or check the FAQs below.`;
+
+      helpInput?.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+          const query = helpInput.value.trim();
+          if (!query) return;
+
+          helpInput.value = '';
+          helpOutput.style.display = 'block';
+          helpContent.textContent = '';
+          helpStatus.textContent = 'Claude is thinking...';
+          helpStatus.style.display = 'block';
+
+          try {
+            if (!window.puter || !puter.ai) {
+              helpContent.textContent = 'AI services are currently unavailable. Please refresh or try again later.';
+              return;
+            }
+
+            // Prefer a stable, non-streaming model to avoid iterator issues
+            let answerText = '';
+            try {
+              const resp = await puter.ai.chat(
+                [
+                  { role: 'system', content: SYSTEM_HELP_PROMPT },
+                  { role: 'user', content: query }
+                ],
+                { model: 'claude-sonnet', stream: false }
+              );
+              answerText = resp?.message?.content || resp?.text || (typeof resp === 'string' ? resp : '');
+            } catch (e1) {
+              // Fallback to Gemini if Anthropic not available
+              const resp2 = await puter.ai.chat(
+                [
+                  { role: 'system', content: SYSTEM_HELP_PROMPT },
+                  { role: 'user', content: query }
+                ],
+                { model: 'gemini-3-pro-preview', stream: false }
+              );
+              answerText = resp2?.message?.content || resp2?.text || (typeof resp2 === 'string' ? resp2 : '');
+            }
+            helpStatus.textContent = 'Assistant:';
+            helpContent.textContent = answerText || 'No response.';
+          } catch (err) {
+            console.error('Help AI error:', err);
+            helpContent.textContent = 'Sorry, I encountered an error while processing your request.';
+            helpStatus.style.display = 'none';
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+
+</html>

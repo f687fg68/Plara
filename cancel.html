@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Cancelled - Plara</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .cancel-container {
+            max-width: 600px;
+            margin: 80px auto;
+            text-align: center;
+            padding: var(--spacing-2xl);
+        }
+
+        .cancel-icon {
+            font-size: 5rem;
+            margin-bottom: var(--spacing-xl);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cancel-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-primary);
+        }
+
+        .cancel-message {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-2xl);
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: #fff7e6;
+            border: 1px solid #ffd591;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-2xl) 0;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            color: #d46b08;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: var(--spacing-sm) 0;
+            color: #8c5e10;
+            display: flex;
+            align-items: start;
+            gap: var(--spacing-sm);
+        }
+
+        .info-box li:before {
+            content: "•";
+            font-weight: bold;
+            margin-right: var(--spacing-xs);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-2xl);
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .cancel-container {
+                margin: 40px auto;
+                padding: var(--spacing-lg);
+            }
+
+            .cancel-title {
+                font-size: 2rem;
+            }
+
+            .cancel-message {
+                font-size: 1.1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-signin {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+        <a href="index.html" class="logo">
+            <span class="logo-dots">⁝</span>
+            <span class="logo-text-main">Plara</span>
+        </a>
+    </nav>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="help.html" class="nav-link">Help</a></li>
+                <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+                <li><a href="features.html" class="nav-link">🤖 Features</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="auth-section">
+                <span class="auth-status">Not signed in</span>
+                <button class="btn-signin" id="signinBtn">Sign in</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="cancel-container">
+            <div class="cancel-icon">⚠️</div>
+            <h1 class="cancel-title">Payment Cancelled</h1>
+            <p class="cancel-message">
+                Your payment was cancelled. No charges have been made to your account.
+            </p>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <h3>What happened?</h3>
+                <ul>
+                    <li>You closed the payment window or clicked "Cancel"</li>
+                    <li>No payment was processed</li>
+                    <li>Your cart is still available if you'd like to try again</li>
+                </ul>
+            </div>
+
+            <!-- Need Help -->
+            <div style="background: var(--color-bg-subtle); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--spacing-lg); margin: var(--spacing-xl) 0;">
+                <p style="color: var(--color-text-secondary); margin: 0;">
+                    💬 Having trouble completing your purchase? Our support team is here to help!
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="pricing.html" class="btn-signin">Try Again</a>
+                <a href="help.html" class="btn-signin" style="background: var(--color-bg-subtle); color: var(--color-text-primary); border: 1px solid var(--color-border);">
+                    Contact Support
+                </a>
+                <a href="index.html" class="btn-signin" style="background: transparent; color: var(--color-text-primary); border: 1px solid var(--color-border); box-shadow: none;">
+                    Go Home
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        // Clear any pending checkout data
+        sessionStorage.removeItem('polar_checkout_id');
+        sessionStorage.removeItem('polar_product_id');
+    </script>
+</body>
+
+</html>

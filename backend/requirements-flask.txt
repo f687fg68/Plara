@@ -1,0 +1,7 @@
+# Lightweight requirements for Flask-based Polar integration
+# Avoids pydantic-core which has Python 3.14 compatibility issues
+
+flask>=3.0.0
+flask-cors>=4.0.0
+httpx>=0.27.0
+python-dotenv>=1.0.0

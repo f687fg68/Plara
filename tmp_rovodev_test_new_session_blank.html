@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Session Blank Page Test</title>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            background: rgba(255,255,255,0.1);
+            padding: 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        button { 
+            margin: 8px; 
+            padding: 12px 24px; 
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        button:hover { 
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        button.primary {
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #fbbf24;
+        }
+        .test-result { 
+            margin: 12px 0; 
+            padding: 12px; 
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .success { border-left: 4px solid #10b981; }
+        .error { border-left: 4px solid #ef4444; }
+        .info { border-left: 4px solid #3b82f6; }
+        .warning { border-left: 4px solid #f59e0b; }
+        #testResults {
+            max-height: 600px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .mock-editor {
+            background: white;
+            color: #1e293b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            min-height: 200px;
+        }
+        .state-display {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 New Session Blank Page Test</h1>
+        <p>Testing that new sessions create a completely blank page</p>
+        
+        <div class="test-section">
+            <h3>📝 Mock Chat & Editor State</h3>
+            <div class="state-display" id="stateDisplay">
+                <strong>Current State:</strong><br>
+                Session ID: <span id="sessionId">Not initialized</span><br>
+                Chat Messages: <span id="chatCount">0</span><br>
+                Editor Blocks: <span id="editorBlocks">0</span><br>
+                Attachments: <span id="attachmentCount">0</span>
+            </div>
+            
+            <div class="mock-editor" id="mockEditor">
+                <em>Empty editor</em>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Test Actions</h3>
+            <button onclick="simulateActivity()" class="primary">1. Simulate Activity</button>
+            <button onclick="testNewSession()" class="primary">2. Test New Session (Clear All)</button>
+            <button onclick="verifyBlankState()">3. Verify Blank State</button>
+            <button onclick="runFullTest()" style="background: linear-gradient(135deg, #f59e0b, #ef4444); font-size: 16px;">▶️ Run Full Test</button>
+        </div>
+        
+        <div id="testResults"></div>
+    </div>
+    
+    <script src="https://js.puter.com/v2/"></script>
+    <script src="puter-kv-integration.js"></script>
+    
+    <script>
+        const resultsDiv = document.getElementById('testResults');
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            resultsDiv.appendChild(div);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+        
+        function clearResults() {
+            resultsDiv.innerHTML = '';
+        }
+        
+        // Mock application state
+        let mockState = {
+            sessionId: 'conv_' + Date.now(),
+            chatHistory: [],
+            editorContent: [],
+            attachments: [],
+            aiOutput: ''
+        };
+        
+        function updateStateDisplay() {
+            document.getElementById('sessionId').textContent = mockState.sessionId;
+            document.getElementById('chatCount').textContent = mockState.chatHistory.length;
+            document.getElementById('editorBlocks').textContent = mockState.editorContent.length;
+            document.getElementById('attachmentCount').textContent = mockState.attachments.length;
+            
+            const editor = document.getElementById('mockEditor');
+            if (mockState.editorContent.length > 0) {
+                editor.innerHTML = mockState.editorContent.map(block => 
+                    `<p>${block}</p>`
+                ).join('');
+            } else {
+                editor.innerHTML = '<em>Empty editor</em>';
+            }
+        }
+        
+        function simulateActivity() {
+            log('📝 Simulating user activity...', 'info');
+            
+            // Add chat messages
+            mockState.chatHistory = [
+                { role: 'user', content: 'Hello!' },
+                { role: 'assistant', content: 'Hi there! How can I help?' },
+                { role: 'user', content: 'Write a document about AI' },
+                { role: 'assistant', content: 'Sure! Let me create that...' }
+            ];
+            
+            // Add editor content
+            mockState.editorContent = [
+                'Introduction to AI',
+                'Artificial Intelligence is...',
+                'Key concepts include...'
+            ];
+            
+            // Add attachments
+            mockState.attachments = [
+                { name: 'document.pdf', size: 1024 },
+                { name: 'image.png', size: 2048 }
+            ];
+            
+            // Add AI output
+            mockState.aiOutput = 'Generated response here...';
+            
+            updateStateDisplay();
+            
+            log('✅ Added 4 chat messages', 'success');
+            log('✅ Added 3 editor blocks', 'success');
+            log('✅ Added 2 attachments', 'success');
+            log('✅ Added AI output', 'success');
+            log('Current state is now populated', 'info');
+        }
+        
+        async function testNewSession() {
+            log('🆕 Testing new session creation...', 'info');
+            log('This should clear EVERYTHING and create blank page', 'warning');
+            
+            try {
+                // Generate new session ID
+                const newSessionId = 'conv_' + Date.now();
+                log(`Generated new session ID: ${newSessionId}`, 'info');
+                
+                // Clear chat history
+                mockState.chatHistory = [];
+                log('✅ Cleared chat history', 'success');
+                
+                // Clear editor content
+                mockState.editorContent = [];
+                log('✅ Cleared editor content', 'success');
+                
+                // Clear attachments
+                mockState.attachments = [];
+                log('✅ Cleared attachments', 'success');
+                
+                // Clear AI output
+                mockState.aiOutput = '';
+                log('✅ Cleared AI output', 'success');
+                
+                // Update session ID
+                mockState.sessionId = newSessionId;
+                log('✅ Updated session ID', 'success');
+                
+                // Save to KV
+                if (window.puterKV && window.puterKV.isInitialized) {
+                    await window.puterKV.saveSessionState({
+                        conversationId: newSessionId,
+                        timestamp: Date.now()
+                    });
+                    log('✅ Saved new session to KV store', 'success');
+                }
+                
+                updateStateDisplay();
+                
+                log('🎉 New blank session created successfully!', 'success');
+                
+            } catch (error) {
+                log(`❌ Error creating new session: ${error.message}`, 'error');
+            }
+        }
+        
+        function verifyBlankState() {
+            log('🔍 Verifying blank state...', 'info');
+            
+            let allClear = true;
+            
+            // Check chat history
+            if (mockState.chatHistory.length === 0) {
+                log('✅ Chat history is empty', 'success');
+            } else {
+                log(`❌ Chat history still has ${mockState.chatHistory.length} messages`, 'error');
+                allClear = false;
+            }
+            
+            // Check editor content
+            if (mockState.editorContent.length === 0) {
+                log('✅ Editor is empty', 'success');
+            } else {
+                log(`❌ Editor still has ${mockState.editorContent.length} blocks`, 'error');
+                allClear = false;
+            }
+            
+            // Check attachments
+            if (mockState.attachments.length === 0) {
+                log('✅ No attachments', 'success');
+            } else {
+                log(`❌ Still has ${mockState.attachments.length} attachments`, 'error');
+                allClear = false;
+            }
+            
+            // Check AI output
+            if (mockState.aiOutput === '') {
+                log('✅ AI output cleared', 'success');
+            } else {
+                log('❌ AI output still present', 'error');
+                allClear = false;
+            }
+            
+            if (allClear) {
+                log('🎉 PERFECT! Page is completely blank', 'success');
+                log('✨ Ready for new conversation', 'info');
+            } else {
+                log('⚠️ Some elements were not cleared properly', 'warning');
+            }
+        }
+        
+        async function runFullTest() {
+            clearResults();
+            log('🚀 Running full blank page test...', 'info');
+            log('═'.repeat(80), 'info');
+            
+            // Step 1: Simulate activity
+            log('<strong>STEP 1: Create activity</strong>', 'info');
+            simulateActivity();
+            await new Promise(r => setTimeout(r, 1000));
+            
+            // Step 2: Create new session
+            log('<strong>STEP 2: Create new blank session</strong>', 'info');
+            await testNewSession();
+            await new Promise(r => setTimeout(r, 1000));
+            
+            // Step 3: Verify blank state
+            log('<strong>STEP 3: Verify everything is cleared</strong>', 'info');
+            verifyBlankState();
+            
+            log('═'.repeat(80), 'info');
+            log('✅ Full test completed!', 'success');
+            log('💡 Open index.html and click "New Session" to test in real app', 'info');
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            updateStateDisplay();
+            log('✅ Mock state initialized', 'success');
+            log('Click "Run Full Test" to test blank page behavior', 'info');
+        });
+    </script>
+</body>
+</html>

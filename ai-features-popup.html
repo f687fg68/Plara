@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Features - Complete Suite</title>
+    <link rel="stylesheet" href="ai-features-popup.css">
+</head>
+
+<body>
+    <!-- Features Popup Modal -->
+    <div id="featuresModal" class="features-modal">
+        <div class="modal-overlay" onclick="closeFeaturesModal()"></div>
+
+        <div class="modal-container">
+            <!-- Header -->
+            <div class="modal-header">
+                <div class="header-content">
+                    <h1>🤖 AI Features Suite</h1>
+                    <p class="subtitle">15+ Specialized AI Tools Powered by Gemini 3.0 Pro & Claude Sonnet 4.5</p>
+                </div>
+                <button class="close-btn" onclick="closeFeaturesModal()">✕</button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-section">
+                <input type="text" id="featureSearch" class="search-input" placeholder="🔍 Search features..."
+                    onkeyup="filterFeatures()">
+                <div class="filter-chips">
+                    <button class="filter-chip active" onclick="filterByCategory('all')">All</button>
+                    <button class="filter-chip" onclick="filterByCategory('legal')">Legal</button>
+                    <button class="filter-chip" onclick="filterByCategory('healthcare')">Healthcare</button>
+                    <button class="filter-chip" onclick="filterByCategory('business')">Business</button>
+                    <button class="filter-chip" onclick="filterByCategory('compliance')">Compliance</button>
+                </div>
+            </div>
+
+            <!-- Features Content -->
+            <div class="modal-body">
+                <!-- Legal & Compliance Section -->
+                <div class="feature-category" data-category="legal compliance">
+                    <h2 class="category-title">⚖️ Legal & Compliance</h2>
+
+                    <div class="feature-grid">
+                        <!-- Regulatory Response Writer -->
+                        <div class="feature-card" data-tags="regulatory responses legal smb">
+                            <div class="feature-icon">📋</div>
+                            <h3>AI Regulatory Response Writer (Responses Only)</h3>
+                            <p class="feature-desc">Bureaucratic Navigator that drafts professional responses to
+                                government notices—fast, cooperative, and fact-based without over-admitting.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/regulatory</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Workflow:</strong> Upload notice → Add fact patterns → Pick strategy
+                                (Proof/Extension/Mitigation) → Draft + human-in-loop
+                            </div>
+                        </div>
+
+                        <!-- Legal Discovery Generator -->
+                        <div class="feature-card" data-tags="legal discovery litigation">
+                            <div class="feature-icon">⚖️</div>
+                            <h3>Legal Discovery Response Generator</h3>
+                            <p class="feature-desc">Digital Litigation Associate: ingests Discovery Requests and your
+                                Case Universe to draft responses with objections and Bates-linked citations.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/discovery</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Workflow:</strong> Ingest evidence  Paste requests  Set defensive logic 
+                                Generate with citations
+                            </div>
+                        </div>
+
+                        <!-- Patent Response -->
+                        <div class="feature-card" data-tags="patent ip intellectual-property legal">
+                            <div class="feature-icon">⚖️</div>
+                            <h3>PatentGuard AI — Patent Office Response Writer</h3>
+                            <p class="feature-desc">Technical Patent Advocate: ingests Office Actions + cited Prior Art
+                                to draft structured, jurisdiction-aware rebuttals (US/EU/JP).</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/patent</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Workflow:</strong> Ingest office action → Load prior art/claims → Pick strategy
+                                (Distinction/Amendment/Rule-based) → Generate Remarks
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Healthcare Section -->
+                <div class="feature-category" data-category="healthcare">
+                    <h2 class="category-title">🏥 Healthcare</h2>
+
+                    <div class="feature-grid">
+                        <!-- Healthcare Denial Response -->
+                        <div class="feature-card" data-tags="healthcare insurance denial appeal providers">
+                            <div class="feature-icon">🏥</div>
+                            <h3>Healthcare Claim Denial/Appeal Response</h3>
+                            <p class="feature-desc">Revenue Recovery Specialist: converts ERA denial codes + clinical
+                                chart into citable medical necessity appeals; aims to double recovery rates.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/health</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Workflow:</strong> Input CARC → Sync clinical evidence → Pick logic
+                                (Clinical/Admin/Contract) → Generate & file
+                            </div>
+                        </div>
+
+                        <!-- ProviderGuard AI -->
+                        <div class="feature-card" data-tags="healthcare provider medical rcm">
+                            <div class="feature-icon">🩺</div>
+                            <h3>ProviderGuard AI</h3>
+                            <p class="feature-desc">Healthcare RCM B2B tool for writing letters of medical necessity and
+                                clinical validation.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/provider</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Features:</strong> Clinical validation, appeal packets, evidence strength
+                            </div>
+                        </div>
+
+                        <!-- Prior Auth Guard -->
+                        <div class="feature-card" data-tags="healthcare prior-auth insurance">
+                            <div class="feature-icon">📋</div>
+                            <h3>PriorAuthGuard AI — Prior Authorization Denial Response</h3>
+                            <p class="feature-desc">Clinical Revenue Guardian: eliminates administrative stalling with
+                                payer-aware rebuttals, exception letters, and P2P talking points.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/prior-auth</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Workflow:</strong> Input denial notice → Load EHR context → Pick strategy
+                                (Exception/Gold Card/P2P) → Export submission
+                            </div>
+                        </div>
+
+                        <!-- Patient Portal Assistant -->
+                        <div class="feature-card" data-tags="healthcare patient portal communication">
+                            <div class="feature-icon">⚕️</div>
+                            <h3>Patient Portal Assistant</h3>
+                            <p class="feature-desc">HIPAA-compliant patient communication for lab results, appointments,
+                                and refill requests.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/patient</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Features:</strong> Local data handling, empathetic responses
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business & Operations Section -->
+                <div class="feature-category" data-category="business">
+                    <h2 class="category-title">💼 Business & Operations</h2>
+
+                    <div class="feature-grid">
+                        <!-- Vendor Pushback -->
+                        <div class="feature-card" data-tags="business vendor contract negotiation">
+                            <div class="feature-icon">🛡️</div>
+                            <h3>Vendor Pushback Writer</h3>
+                            <p class="feature-desc">Draft professional pushback for price increases, SLA violations, and
+                                unfair contract terms.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/pushback</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Tones:</strong> Diplomatic, Firm, Assertive, Final Warning
+                            </div>
+                        </div>
+
+                        <!-- RFP Response -->
+                        <div class="feature-card" data-tags="business government rfp proposal">
+                            <div class="feature-icon">🏛️</div>
+                            <h3>Government RFP Writer</h3>
+                            <p class="feature-desc">FAR/DFARS-compliant RFP responses with compliance matrices and
+                                competitive positioning.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/rfp</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Modes:</strong> Shipley, Strict Compliance, Ghosting
+                            </div>
+                        </div>
+
+                        <!-- Executive Ghostwriter -->
+                        <div class="feature-card" data-tags="business executive communication leadership">
+                            <div class="feature-icon">✒️</div>
+                            <h3>Executive Ghostwriter</h3>
+                            <p class="feature-desc">Mimic executive voice and tone for C-suite communications and
+                                high-stakes messaging.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/exec</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Features:</strong> Voice matching, nuance control slider
+                            </div>
+                        </div>
+
+                        <!-- Churn Prevention -->
+                        <div class="feature-card" data-tags="business customer-success retention">
+                            <div class="feature-icon">🛡️</div>
+                            <h3>Churn Prevention Engine</h3>
+                            <p class="feature-desc">Analyze customer risk and draft high-EQ retention emails with
+                                sentiment analysis.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/churn</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Features:</strong> Risk scoring, root cause analysis, action recommendations
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial & Compliance Section -->
+                <div class="feature-category" data-category="compliance">
+                    <h2 class="category-title">🏦 Financial & Compliance</h2>
+
+                    <div class="feature-grid">
+                        <!-- Insurance Response -->
+                        <div class="feature-card" data-tags="insurance claims rejection appeal">
+                            <div class="feature-icon">🛡️</div>
+                            <h3>Insurance Response Writer</h3>
+                            <p class="feature-desc">Analyze rejection letters and draft compelling responses for
+                                insurance claim denials.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/insurance</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Formats:</strong> Text, PDF, Image analysis supported
+                            </div>
+                        </div>
+
+                        <!-- Dispute Response -->
+                        <div class="feature-card" data-tags="dispute chargeback payment financial">
+                            <div class="feature-icon">⚡</div>
+                            <h3>AI Dispute & Chargeback Response Writer</h3>
+                            <p class="feature-desc">Digital Defense Attorney for your revenue: converts raw evidence
+                                into lawyer-grade, platform-tailored rebuttals.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/dispute</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Platform Logic:</strong> Stripe/Credit Cards → Compelling Evidence; PayPal →
+                                Policy Compliance; Amazon/eBay → Marketplace Rules
+                            </div>
+                        </div>
+
+                        <!-- Mortgage Guard -->
+                        <div class="feature-card" data-tags="mortgage lending compliance fcra ecoa">
+                            <div class="feature-icon">🏦</div>
+                            <h3>Mortgage Denial/Appeal Response Writer</h3>
+                            <p class="feature-desc">Regulatory Compliance Specialist: transforms underwriting findings
+                                into FCRA/ECOA-compliant Adverse Action Notices and appeal responses.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/mortgage</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Highlights:</strong> LOS/DU ingestion, specific reasons, strict templates,
+                                auditable Logic Log
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic & Education Section -->
+                <div class="feature-category" data-category="academic">
+                    <h2 class="category-title">🎓 Academic & Education</h2>
+
+                    <div class="feature-grid">
+                        <!-- Academic Appeal -->
+                        <div class="feature-card" data-tags="academic appeal education university">
+                            <div class="feature-icon">🎓</div>
+                            <h3>Academic Appeal Writer</h3>
+                            <p class="feature-desc">Draft compelling appeals for grade disputes, academic probation, and
+                                policy violations.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/appeal</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Features:</strong> Refine mode, model comparison, tone optimization
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Safety & Security Section -->
+                <div class="feature-category" data-category="safety">
+                    <h2 class="category-title">🛡️ Safety & Security</h2>
+
+                    <div class="feature-grid">
+                        <!-- SafeSpace AI -->
+                        <div class="feature-card" data-tags="safety harassment de-escalation security">
+                            <div class="feature-icon">🛡️</div>
+                            <h3>SafeSpace AI</h3>
+                            <p class="feature-desc">De-escalate harassment with threat analysis and safe response
+                                strategies (Grey Rock, Firm Boundary).</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/safety</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Analysis:</strong> Threat levels, reporting recommendations
+                            </div>
+                        </div>
+
+                        <!-- ScamBaiter AI -->
+                        <div class="feature-card" data-tags="scam security fraud protection">
+                            <div class="feature-icon">🎣</div>
+                            <h3>AI Response Generator for Scam Baiting</h3>
+                            <p class="feature-desc">Digital Vigilante Persona: adversarial conversational design to
+                                waste scammers’ time with believable, high-context distractions.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/scam</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Workflow:</strong> Paste hook → Pick persona → Generate friction → Copy & loop
+                                (shareable logs)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Communication & Social Section -->
+                <div class="feature-category" data-category="communication">
+                    <h2 class="category-title">💬 Communication & Social</h2>
+
+                    <div class="feature-grid">
+                        <!-- CivilMind AI -->
+                        <div class="feature-card" data-tags="politics debate communication discourse">
+                            <div class="feature-icon">🏛️</div>
+                            <h3>AI Response Generator for Civil Political Discourse</h3>
+                            <p class="feature-desc">Digital Diplomat: transforms polarized posts into constructive
+                                dialogue using acknowledgement, common ground, and steel‑man strategies.</p>
+                            <div class="feature-meta">
+                                <span class="command-badge">/civil</span>
+                                <span class="ai-badge">🧠 Gemini</span>
+                                <span class="ai-badge">📝 Claude</span>
+                            </div>
+                            <div class="feature-details">
+                                <strong>Workflow:</strong> Paste attack → Set stance/tone → Pick bridge
+                                (Acknowledge/Common Ground/Steel-man) → Generate & refine
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Models Info -->
+                <div class="ai-models-section">
+                    <h2 class="section-title">🤖 Powered By Advanced AI</h2>
+                    <div class="models-grid">
+                        <div class="model-card gemini">
+                            <div class="model-icon">🧠</div>
+                            <h3>Gemini 3.0 Pro</h3>
+                            <p>Google's advanced reasoning model for complex analysis, compliance checking, and logical
+                                reasoning.</p>
+                            <div class="model-strengths">
+                                <span class="strength-tag">Analysis</span>
+                                <span class="strength-tag">Reasoning</span>
+                                <span class="strength-tag">Compliance</span>
+                            </div>
+                        </div>
+                        <div class="model-card claude">
+                            <div class="model-icon">📝</div>
+                            <h3>Claude Sonnet 4.5</h3>
+                            <p>Anthropic's superior writing model for drafting formal documents, legal language, and
+                                persuasive content.</p>
+                            <div class="model-strengths">
+                                <span class="strength-tag">Writing</span>
+                                <span class="strength-tag">Legal Tone</span>
+                                <span class="strength-tag">Persuasion</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-number">15+</div>
+                        <div class="stat-label">AI Tools</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">AI Models</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Languages</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <p>💡 <strong>Tip:</strong> Type any command in the chat to get started. Use <code>/help</code> for
+                    detailed instructions.</p>
+                <p>🆓 All features are <strong>free and unlimited</strong> with user-pays model via Puter.js</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Open features modal
+        function openFeaturesModal() {
+            document.getElementById('featuresModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close features modal
+        function closeFeaturesModal() {
+            document.getElementById('featuresModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Filter features by search
+        function filterFeatures() {
+            const searchTerm = document.getElementById('featureSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('.feature-card');
+
+            cards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const desc = card.querySelector('.feature-desc').textContent.toLowerCase();
+                const tags = card.getAttribute('data-tags').toLowerCase();
+
+                if (title.includes(searchTerm) || desc.includes(searchTerm) || tags.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            // Update active filter chip
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            const categories = document.querySelectorAll('.feature-category');
+
+            if (category === 'all') {
+                categories.forEach(cat => cat.style.display = 'block');
+            } else {
+                categories.forEach(cat => {
+                    if (cat.getAttribute('data-category').includes(category)) {
+                        cat.style.display = 'block';
+                    } else {
+                        cat.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeFeaturesModal();
+            }
+        });
+
+        // Make globally available
+        window.openFeaturesModal = openFeaturesModal;
+        window.closeFeaturesModal = closeFeaturesModal;
+    </script>
+</body>
+
+</html>

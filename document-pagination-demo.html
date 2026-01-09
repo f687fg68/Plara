@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Pagination Demo - Multi-Page Documents</title>
+    <script src="https://js.puter.com/v2/"></script>
+    
+    <!-- Editor.js Core -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+    
+    <link rel="stylesheet" href="document-pagination.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .demo-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .demo-header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .badges {
+            margin-top: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 5px;
+        }
+
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .instructions {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .instructions h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        .instructions code {
+            background: #f5f7ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+        }
+
+        .controls-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .controls-panel h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .demo-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .demo-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .demo-btn-secondary {
+            background: #f5f7ff;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .demo-btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .demo-btn-success {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .demo-btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        .editor-wrapper {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            position: relative;
+        }
+
+        #editorjs {
+            min-height: 400px;
+        }
+
+        .pagination-active .editor-wrapper {
+            margin-left: 250px;
+        }
+
+        @media (max-width: 768px) {
+            .demo-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .demo-btn {
+                width: 100%;
+            }
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: #f5f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        <h1>📄 Document Pagination System</h1>
+        <p>Automatic multi-page document management with AI generation support</p>
+        <div class="badges">
+            <span class="badge">📄 Auto-Pagination</span>
+            <span class="badge">🤖 AI Generation</span>
+            <span class="badge">🔄 Page Navigation</span>
+            <span class="badge">➕ Add Pages</span>
+            <span class="badge">💾 Export All</span>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <!-- Instructions -->
+        <div class="instructions">
+            <h2>🚀 How It Works</h2>
+            <ol>
+                <li>The <strong>pagination sidebar</strong> appears on the left side of the editor</li>
+                <li>Start typing - when content exceeds limits (50 blocks or 3000 words), a <strong>new page is automatically created</strong></li>
+                <li>Use <strong>← Prev / Next →</strong> buttons to navigate between pages</li>
+                <li>Click <strong>➕ Add Page</strong> to manually create a new page</li>
+                <li>Click any page in the sidebar list to jump to it</li>
+                <li>During AI generation, content automatically flows to new pages as needed</li>
+                <li>Use <strong>💾 Export All</strong> to download all pages as JSON</li>
+            </ol>
+        </div>
+
+        <!-- Features -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>📄 Auto-Pagination</h4>
+                <p>Automatically creates new pages when content exceeds 50 blocks or 3000 words</p>
+            </div>
+            <div class="feature-card">
+                <h4>🤖 AI Generation Support</h4>
+                <p>During AI content generation, automatically flows content to new pages</p>
+            </div>
+            <div class="feature-card">
+                <h4>🔄 Smart Navigation</h4>
+                <p>Prev/Next buttons, page list, and jump-to-page functionality</p>
+            </div>
+            <div class="feature-card">
+                <h4>💾 Export All Pages</h4>
+                <p>Export entire multi-page document with all content preserved</p>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-panel">
+            <h3>🎮 Test Controls</h3>
+            <div class="button-group">
+                <button class="demo-btn demo-btn-primary" onclick="generateLongContent()">
+                    🤖 Generate Long AI Content (Auto-Paginate)
+                </button>
+                <button class="demo-btn demo-btn-success" onclick="addSamplePage()">
+                    ➕ Add Sample Page
+                </button>
+                <button class="demo-btn demo-btn-secondary" onclick="goToFirstPage()">
+                    ⏮️ Go to First Page
+                </button>
+                <button class="demo-btn demo-btn-secondary" onclick="goToLastPage()">
+                    ⏭️ Go to Last Page
+                </button>
+                <button class="demo-btn demo-btn-secondary" onclick="exportAll()">
+                    💾 Export All Pages
+                </button>
+                <button class="demo-btn demo-btn-secondary" onclick="showStats()">
+                    📊 Show Statistics
+                </button>
+            </div>
+        </div>
+
+        <!-- Editor -->
+        <div class="editor-wrapper pagination-active">
+            <div id="editorjs"></div>
+        </div>
+    </div>
+
+    <script src="document-pagination.js"></script>
+    
+    <script>
+        let documentPagination;
+
+        // Initialize pagination system
+        async function init() {
+            console.log('🚀 Initializing Document Pagination Demo...');
+
+            // Make Editor.js tools globally available
+            window.Header = Header;
+            window.List = List;
+            window.Paragraph = Paragraph;
+            window.Quote = Quote;
+
+            // Create global tools configuration
+            window.editorTools = {
+                header: {
+                    class: Header,
+                    config: {
+                        placeholder: 'Enter a header',
+                        levels: [1, 2, 3, 4, 5, 6],
+                        defaultLevel: 2
+                    }
+                },
+                list: {
+                    class: List,
+                    inlineToolbar: true
+                },
+                paragraph: {
+                    class: Paragraph,
+                    inlineToolbar: true
+                },
+                quote: {
+                    class: Quote,
+                    inlineToolbar: true
+                }
+            };
+
+            // Initialize pagination
+            documentPagination = new DocumentPagination({
+                maxBlocksPerPage: 50,
+                maxWordsPerPage: 3000,
+                autoCreatePages: true,
+                showPageNumbers: true,
+                enableNavigation: true
+            });
+
+            // Make globally available
+            window.documentPagination = documentPagination;
+
+            // Add some initial content
+            setTimeout(async () => {
+                const editor = documentPagination.getCurrentEditor();
+                if (editor) {
+                    await editor.blocks.insert('header', {
+                        text: 'Welcome to Multi-Page Documents!',
+                        level: 1
+                    });
+                    await editor.blocks.insert('paragraph', {
+                        text: 'This demo shows automatic pagination for long documents. Start typing, and when content exceeds limits, new pages are automatically created!'
+                    });
+                    await editor.blocks.insert('paragraph', {
+                        text: 'Use the sidebar on the left to navigate between pages. Try the buttons above to test features!'
+                    });
+                }
+            }, 500);
+
+            console.log('✅ Demo initialized successfully');
+        }
+
+        // Generate long AI-style content to test auto-pagination
+        async function generateLongContent() {
+            showNotification('🤖 Generating long content...', 'info');
+            
+            documentPagination.state.isGenerating = true;
+            documentPagination.state.generationPageIndex = documentPagination.state.currentPageIndex;
+
+            try {
+                // Simulate AI generation with delays
+                const sections = [
+                    { header: 'Executive Summary', paragraphs: 5 },
+                    { header: 'Introduction', paragraphs: 8 },
+                    { header: 'Background and Context', paragraphs: 10 },
+                    { header: 'Methodology', paragraphs: 7 },
+                    { header: 'Analysis and Findings', paragraphs: 12 },
+                    { header: 'Discussion', paragraphs: 10 },
+                    { header: 'Recommendations', paragraphs: 8 },
+                    { header: 'Conclusion', paragraphs: 6 },
+                    { header: 'References', paragraphs: 5 }
+                ];
+
+                for (const section of sections) {
+                    // Add section header
+                    await documentPagination.insertAIContent({
+                        type: 'header',
+                        data: { text: section.header, level: 2 }
+                    });
+
+                    // Add paragraphs
+                    for (let i = 0; i < section.paragraphs; i++) {
+                        const text = generateLoremIpsum(50 + Math.floor(Math.random() * 50));
+                        await documentPagination.insertAIContent({
+                            type: 'paragraph',
+                            data: { text: text }
+                        });
+
+                        // Small delay to simulate streaming
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                }
+
+                documentPagination.finishAIGeneration();
+                showNotification(`✅ Generated content across ${documentPagination.state.totalPages} pages!`, 'success');
+
+            } catch (error) {
+                console.error('Generation error:', error);
+                showNotification('Generation failed', 'error');
+                documentPagination.finishAIGeneration();
+            }
+        }
+
+        // Generate lorem ipsum text
+        function generateLoremIpsum(words) {
+            const loremWords = [
+                'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
+                'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
+                'magna', 'aliqua', 'enim', 'ad', 'minim', 'veniam', 'quis', 'nostrud',
+                'exercitation', 'ullamco', 'laboris', 'nisi', 'aliquip', 'ex', 'ea', 'commodo',
+                'consequat', 'duis', 'aute', 'irure', 'in', 'reprehenderit', 'voluptate',
+                'velit', 'esse', 'cillum', 'fugiat', 'nulla', 'pariatur', 'excepteur', 'sint',
+                'regulatory', 'compliance', 'documentation', 'requirements', 'standards',
+                'procedures', 'policies', 'guidelines', 'framework', 'assessment'
+            ];
+
+            const result = [];
+            for (let i = 0; i < words; i++) {
+                result.push(loremWords[Math.floor(Math.random() * loremWords.length)]);
+            }
+            
+            let text = result.join(' ');
+            text = text.charAt(0).toUpperCase() + text.slice(1) + '.';
+            return text;
+        }
+
+        // Add sample page with content
+        async function addSamplePage() {
+            const newPage = documentPagination.addNewPage();
+            
+            // Add some content to the new page
+            setTimeout(async () => {
+                const editor = documentPagination.editors[newPage.id];
+                if (editor) {
+                    await editor.blocks.insert('header', {
+                        text: `Page ${newPage.number} Content`,
+                        level: 2
+                    });
+                    await editor.blocks.insert('paragraph', {
+                        text: 'This is sample content for the new page. You can start editing here!'
+                    });
+                }
+            }, 200);
+        }
+
+        // Navigate to first page
+        function goToFirstPage() {
+            documentPagination.goToPage(0);
+        }
+
+        // Navigate to last page
+        function goToLastPage() {
+            documentPagination.goToPage(documentPagination.state.totalPages - 1);
+        }
+
+        // Export all pages
+        async function exportAll() {
+            await documentPagination.exportAllPages();
+        }
+
+        // Show document statistics
+        async function showStats() {
+            let totalWords = 0;
+            let totalBlocks = 0;
+
+            for (const page of documentPagination.state.pages) {
+                totalWords += page.wordCount;
+                totalBlocks += page.blocks.length;
+            }
+
+            const stats = `
+📊 Document Statistics
+
+📄 Total Pages: ${documentPagination.state.totalPages}
+📝 Total Words: ${totalWords}
+🧱 Total Blocks: ${totalBlocks}
+📖 Avg Words/Page: ${Math.round(totalWords / documentPagination.state.totalPages)}
+⏱️ Reading Time: ${Math.ceil(totalWords / 200)} minutes
+
+Current Page: ${documentPagination.state.currentPageIndex + 1}
+Current Page Words: ${documentPagination.state.pages[documentPagination.state.currentPageIndex].wordCount}
+            `.trim();
+
+            alert(stats);
+        }
+
+        // Notification function
+        window.showNotification = function(message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${message}`);
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 100000;
+                animation: slideIn 0.3s ease-out;
+                font-weight: 600;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(400px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize when ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>

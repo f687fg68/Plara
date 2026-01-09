@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PatentProse AI - Office Action Response Platform</title>
+    
+    <!-- Puter.js SDK -->
+    <script src="https://js.puter.com/v2/"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary: #0f172a;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0a0f1a;
+            --bg-card: #111827;
+            --bg-elevated: #1e293b;
+            --bg-input: #0f172a;
+            --border: #1e3a5f;
+            --border-light: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+            --shadow-glow: 0 0 40px rgba(37, 99, 235, 0.15);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-logo {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-status {
+            margin-top: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            min-width: 320px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+
+        .toast-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .toast.success .toast-icon { color: var(--success); }
+        .toast.error .toast-icon { color: var(--danger); }
+        .toast.warning .toast-icon { color: var(--warning); }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* App Container */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .app-container.active {
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0 16px;
+            width: 320px;
+            transition: all 0.2s;
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .header-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Page Content */
+        .page-content {
+            flex: 1;
+            padding: 32px;
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+            height: calc(100vh - 140px);
+        }
+
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--bg-elevated);
+        }
+
+        .message-content {
+            flex: 1;
+            background: var(--bg-elevated);
+            padding: 14px 18px;
+            border-radius: var(--radius);
+            max-width: 80%;
+        }
+
+        .message.user .message-content {
+            background: var(--primary);
+        }
+
+        .message-text {
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 0;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-input-area {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-elevated);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            min-height: 48px;
+            max-height: 150px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .chat-send-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .chat-send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+        }
+
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Sidebar Panel */
+        .sidebar-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .panel-body {
+            flex: 1;
+            padding: 20px 24px;
+            overflow-y: auto;
+        }
+
+        /* Suggestions */
+        .suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .suggestion-chip {
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .suggestion-chip:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Context Info */
+        .context-info {
+            margin-bottom: 20px;
+        }
+
+        .context-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .context-item:last-child {
+            border-bottom: none;
+        }
+
+        .context-label {
+            color: var(--text-muted);
+        }
+
+        .context-value {
+            font-weight: 600;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">PatentProse AI</div>
+        <div class="loading-spinner"></div>
+        <div class="loading-status" id="loadingStatus">Initializing AI Engine...</div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="logo-text">PatentProse AI</div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <div class="nav-item active" data-page="chat">
+                        <i class="fas fa-comments"></i>
+                        <span>AI Assistant</span>
+                    </div>
+                    <div class="nav-item" data-page="generator">
+                        <i class="fas fa-robot"></i>
+                        <span>Response Generator</span>
+                    </div>
+                    <div class="nav-item" data-page="cases">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Cases</span>
+                        <span class="nav-badge" id="casesBadge">0</span>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Intelligence</div>
+                    <div class="nav-item" data-page="examiner">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Examiner Database</span>
+                    </div>
+                    <div class="nav-item" data-page="research">
+                        <i class="fas fa-search"></i>
+                        <span>Legal Research</span>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Library</div>
+                    <div class="nav-item" data-page="responses">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Saved Responses</span>
+                    </div>
+                    <div class="nav-item" data-page="templates">
+                        <i class="fas fa-copy"></i>
+                        <span>Templates</span>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="page-title" id="pageTitle">AI Assistant</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search..." id="globalSearch">
+                    </div>
+                    <button class="header-btn" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="newCaseBtn">
+                        <i class="fas fa-plus"></i>
+                        New Case
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Page -->
+            <div class="page-content active" id="page-chat">
+                <div class="chat-container">
+                    <!-- Chat Main -->
+                    <div class="chat-main">
+                        <div class="chat-header">
+                            <div class="chat-title">
+                                <i class="fas fa-robot"></i>
+                                Patent Prosecution AI Assistant
+                            </div>
+                            <button class="btn btn-sm" id="clearChatBtn" style="background: var(--bg-elevated); color: var(--text-secondary);">
+                                <i class="fas fa-trash"></i>
+                                Clear
+                            </button>
+                        </div>
+                        
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- Welcome message -->
+                            <div class="message">
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-text">👋 Hello! I'm your AI patent prosecution assistant, powered by Gemini 3.0 Pro and Claude Sonnet 4.5.
+
+I can help you with:
+• Office action response generation
+• Legal research and case law analysis
+• Claim amendment strategies
+• Examiner behavior analysis
+• Prosecution strategy consultation
+
+How can I assist you today?</div>
+                                    <div class="message-time">Just now</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input-area">
+                            <div class="chat-input-wrapper">
+                                <textarea 
+                                    class="chat-input" 
+                                    id="chatInput" 
+                                    placeholder="Ask me anything about patent prosecution..."
+                                    rows="1"></textarea>
+                                <button class="chat-send-btn" id="sendBtn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sidebar Panel -->
+                    <div class="sidebar-panel">
+                        <div class="panel-header">
+                            <div class="panel-title">Quick Actions</div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="suggestions" id="suggestions">
+                                <!-- Dynamically populated -->
+                            </div>
+                            
+                            <div style="margin-top: 24px;">
+                                <div class="panel-title" style="margin-bottom: 12px;">Current Context</div>
+                                <div class="context-info" id="contextInfo">
+                                    <div class="empty-state" style="padding: 20px;">
+                                        <div class="empty-icon"><i class="fas fa-info-circle"></i></div>
+                                        <div class="empty-desc">No active case</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other pages will be added via JavaScript -->
+            <div class="page-content" id="page-generator">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-robot"></i>
+                            Response Generator
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <div class="empty-icon"><i class="fas fa-magic"></i></div>
+                            <div class="empty-title">Response Generator</div>
+                            <div class="empty-desc">Upload an office action to generate a response</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-content" id="page-cases">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-briefcase"></i>
+                            Cases
+                        </div>
+                    </div>
+                    <div class="card-body" id="casesContainer">
+                        <div class="empty-state">
+                            <div class="empty-icon"><i class="fas fa-briefcase"></i></div>
+                            <div class="empty-title">No Cases Yet</div>
+                            <div class="empty-desc">Create your first case to get started</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Backend Scripts -->
+    <script src="patentprose-ai-engine.js"></script>
+    <script src="patentprose-chat-backend.js"></script>
+    <script src="patentprose-storage-puter.js"></script>
+    <script src="patentprose-app.js"></script>

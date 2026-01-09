@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Processor - PatentProse AI</title>
+    
+    <!-- Puter.js SDK -->
+    <script src="https://js.puter.com/v2/"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0a0f1a;
+            --bg-card: #111827;
+            --bg-elevated: #1e293b;
+            --bg-input: #0f172a;
+            --border: #1e3a5f;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .document-processor {
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 24px;
+            min-height: calc(100vh - 200px);
+        }
+
+        .main-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-elevated);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-body {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 60px 40px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: var(--bg-input);
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .upload-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: var(--bg-elevated);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        .upload-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .upload-formats {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .format-badge {
+            padding: 4px 12px;
+            background: var(--bg-elevated);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Document Preview */
+        .document-preview {
+            background: var(--bg-input);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .document-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .doc-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .doc-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .doc-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .doc-content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Extraction Results */
+        .extraction-results {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .result-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+
+        .result-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .result-value {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .result-value.code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-input);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            padding: 4px 12px;
+            background: var(--primary);
+            color: white;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Chat Sidebar */
+        .chat-sidebar {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--bg-elevated);
+        }
+
+        .message-content {
+            flex: 1;
+            background: var(--bg-elevated);
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .message.user .message-content {
+            background: var(--primary);
+        }
+
+        .chat-input-area {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-elevated);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+        }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 24px;
+        }
+
+        .progress-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .document-processor {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 Document Processor</h1>
+            <p>Upload and analyze patent office action documents with AI assistance</p>
+        </div>
+
+        <div class="document-processor">
+            <!-- Main Document Panel -->
+            <div class="main-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-file-upload"></i>
+                        Document Upload & Analysis
+                    </div>
+                    <div class="btn-group" id="actionButtons" style="display: none;">
+                        <button class="btn btn-secondary" id="clearBtn">
+                            <i class="fas fa-times"></i>
+                            Clear
+                        </button>
+                        <button class="btn btn-primary" id="analyzeBtn">
+                            <i class="fas fa-magic"></i>
+                            Analyze with AI
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-body" id="mainPanel">
+                    <!-- Upload Zone (Initial State) -->
+                    <div class="upload-zone" id="uploadZone">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-title">Upload Office Action Document</div>
+                        <div class="upload-subtitle">Drag & drop your document here or click to browse</div>
+                        <div class="upload-formats">
+                            <span class="format-badge">PDF</span>
+                            <span class="format-badge">DOCX</span>
+                            <span class="format-badge">TXT</span>
+                        </div>
+                        <input type="file" id="fileInput" accept=".pdf,.docx,.txt" style="display: none;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Sidebar -->
+            <div class="chat-sidebar">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-comments"></i>
+                        AI Assistant
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            👋 Hi! Upload an office action document and I'll help you analyze it and draft a response.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <div class="chat-input-wrapper">
+                        <textarea 
+                            class="chat-input" 
+                            id="chatInput" 
+                            placeholder="Ask me about the document..."
+                            rows="1"></textarea>
+                        <button class="send-btn" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backend Scripts -->
+    <script src="patentprose-ai-engine.js"></script>
+    <script src="patentprose-chat-backend.js"></script>
+    <script src="patentprose-storage-puter.js"></script>
+    
+    <script>
+        // Document UI Controller
+        class DocumentUI {
+            constructor() {
+                this.aiEngine = null;
+                this.chatBackend = null;
+                this.storage = null;
+                this.currentDocument = null;
+                this.extractedData = null;
+            }
+
+            async initialize() {
+                try {
+                    console.log('📄 Initializing Document UI...');
+
+                    // Initialize backend systems
+                    this.aiEngine = new PatentProseAI();
+                    await this.aiEngine.initialize();
+
+                    this.storage = new PatentProseStorage();
+                    await this.storage.initialize();
+
+                    this.chatBackend = new PatentProseChat(this.aiEngine);
+                    await this.chatBackend.initialize();
+
+                    // Setup event listeners
+                    this.setupEventListeners();
+
+                    console.log('✅ Document UI ready');
+                    this.addChatMessage('assistant', '✅ System ready! Upload a document to begin.');
+                } catch (error) {
+                    console.error('❌ Initialization error:', error);
+                    this.addChatMessage('assistant', '❌ Failed to initialize. Please refresh the page.');
+                }
+            }
+
+            setupEventListeners() {
+                const uploadZone = document.getElementById('uploadZone');
+                const fileInput = document.getElementById('fileInput');
+                const chatInput = document.getElementById('chatInput');
+                const sendBtn = document.getElementById('sendBtn');
+
+                // Upload zone click
+                uploadZone.addEventListener('click', () => {
+                    fileInput.click();
+                });
+
+                // File selection
+                fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        this.handleFileUpload(e.target.files[0]);
+                    }
+                });
+
+                // Drag and drop
+                uploadZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadZone.classList.add('dragover');
+                });
+
+                uploadZone.addEventListener('dragleave', () => {
+                    uploadZone.classList.remove('dragover');
+                });
+
+                uploadZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadZone.classList.remove('dragover');
+                    
+                    if (e.dataTransfer.files.length > 0) {
+                        this.handleFileUpload(e.dataTransfer.files[0]);
+                    }
+                });
+
+                // Chat
+                sendBtn.addEventListener('click', () => this.sendChatMessage());
+                
+                chatInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendChatMessage();
+                    }
+                });
+
+                // Analyze button
+                document.getElementById('analyzeBtn').addEventListener('click', () => {
+                    this.analyzeDocument();
+                });
+
+                // Clear button
+                document.getElementById('clearBtn').addEventListener('click', () => {
+                    this.clearDocument();
+                });
+            }
+
+            async handleFileUpload(file) {
+                try {
+                    this.addChatMessage('assistant', `📄 Processing ${file.name}...`);
+
+                    // Save document
+                    const docMetadata = await this.storage.saveOfficeAction(file, {
+                        uploadedAt: new Date().toISOString()
+                    });
+
+                    this.currentDocument = docMetadata;
+
+                    // Extract text
+                    let text = '';
+                    if (file.type === 'text/plain') {
+                        text = await file.text();
+                    } else if (file.type === 'application/pdf') {
+                        text = `[PDF Document: ${file.name}]\n\n`;
+                        text += await this.extractPDFText(file);
+                    } else {
+                        text = await file.text();
+                    }
+
+                    // Display document
+                    this.displayDocument(file, text);
+
+                    // Update chat context
+                    this.chatBackend.updateContext({
+                        document: docMetadata,
+                        documentText: text
+                    });
+
+                    this.addChatMessage('assistant', 
+                        `✅ Document uploaded! I can see it's ${(file.size / 1024).toFixed(1)} KB. Would you like me to analyze it?`);
+
+                    // Show action buttons
+                    document.getElementById('actionButtons').style.display = 'flex';
+
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    this.addChatMessage('assistant', '❌ Failed to process document. Please try again.');
+                }
+            }
+
+            displayDocument(file, text) {
+                const mainPanel = document.getElementById('mainPanel');
+                
+                mainPanel.innerHTML = `
+                    <div class="document-preview">
+                        <div class="document-header">
+                            <div class="doc-icon">
+                                <i class="fas fa-file-${this.getFileIcon(file.type)}"></i>
+                            </div>
+                            <div class="doc-info">
+                                <h3>${file.name}</h3>
+                                <div class="doc-meta">
+                                    ${(file.size / 1024).toFixed(1)} KB • 
+                                    ${file.type || 'Unknown type'} • 
+                                    ${new Date().toLocaleString()}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="doc-content">${text.substring(0, 3000)}${text.length > 3000 ? '\n\n...(truncated)' : ''}</div>
+                    </div>
+
+                    <div class="extraction-results" id="extractionResults">
+                        <div class="result-card">
+                            <div class="result-label">Status</div>
+                            <div class="result-value">Ready for analysis</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            async analyzeDocument() {
+                if (!this.currentDocument) {
+                    this.addChatMessage('assistant', '❌ No document uploaded');
+                    return;
+                }
+
+                this.addChatMessage('user', 'Analyze this document');
+                this.addChatMessage('assistant', '🔍 Analyzing document with AI...');
+
+                try {
+                    // Use AI to extract key information
+                    const analysis = await this.aiEngine.analyzeOfficeAction({
+                        officeActionText: this.currentDocument.extractedText || '',
+                        claims: '',
+                        priorArt: '',
+                        jurisdiction: 'USPTO',
+                        rejectionTypes: []
+                    });
+
+                    this.extractedData = analysis;
+                    this.displayAnalysisResults(analysis);
+
+                    this.addChatMessage('assistant', 
+                        `✅ Analysis complete! I've identified ${analysis.rejections?.length || 0} rejection grounds. Ask me anything about the document.`);
+
+                } catch (error) {
+                    console.error('Analysis error:', error);
+                    this.addChatMessage('assistant', '❌ Analysis failed. Please try again.');
+                }
+            }
+
+            displayAnalysisResults(analysis) {
+                const resultsContainer = document.getElementById('extractionResults');
+                
+                const html = `
+                    <div class="result-card">
+                        <div class="result-label">Summary</div>
+                        <div class="result-value">${analysis.summary || 'Analysis in progress...'}</div>
+                    </div>
+
+                    ${analysis.rejections && analysis.rejections.length > 0 ? `
+                    <div class="result-card">
+                        <div class="result-label">Rejection Types</div>
+                        <div class="result-tags">
+                            ${analysis.rejections.map(r => `<span class="tag">${r.type}</span>`).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    ${analysis.recommendations && analysis.recommendations.length > 0 ? `
+                    <div class="result-card">
+                        <div class="result-label">Recommendations</div>
+                        <div class="result-value">
+                            ${analysis.recommendations.map((r, i) => `${i + 1}. ${r}`).join('<br>')}
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+
+                resultsContainer.innerHTML = html;
+            }
+
+            async sendChatMessage() {
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+
+                if (!message) return;
+
+                input.value = '';
+                this.addChatMessage('user', message);
+
+                try {
+                    const response = await this.chatBackend.sendMessage(message, null, (chunk) => {
+                        if (chunk.done) {
+                            this.addChatMessage('assistant', chunk.fullText);
+                        }
+                    });
+
+                    if (!response.metadata?.streaming) {
+                        this.addChatMessage('assistant', response.text);
+                    }
+                } catch (error) {
+                    console.error('Chat error:', error);
+                    this.addChatMessage('assistant', '❌ Failed to process message.');
+                }
+            }
+
+            addChatMessage(role, text) {
+                const messagesContainer = document.getElementById('chatMessages');
+                
+                const messageEl = document.createElement('div');
+                messageEl.className = `message ${role}`;
+                
+                messageEl.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-${role === 'user' ? 'user' : 'robot'}"></i>
+                    </div>
+                    <div class="message-content">${text}</div>
+                `;
+
+                messagesContainer.appendChild(messageEl);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            clearDocument() {
+                this.currentDocument = null;
+                this.extractedData = null;
+                
+                const mainPanel = document.getElementById('mainPanel');
+                mainPanel.innerHTML = `
+                    <div class="upload-zone" id="uploadZone">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="upload-title">Upload Office Action Document</div>
+                        <div class="upload-subtitle">Drag & drop your document here or click to browse</div>
+                        <div class="upload-formats">
+                            <span class="format-badge">PDF</span>
+                            <span class="format-badge">DOCX</span>
+                            <span class="format-badge">TXT</span>
+                        </div>
+                        <input type="file" id="fileInput" accept=".pdf,.docx,.txt" style="display: none;">
+                    </div>
+                `;
+
+                document.getElementById('actionButtons').style.display = 'none';
+                this.setupEventListeners();
+                this.addChatMessage('assistant', 'Document cleared. Upload a new document to continue.');
+            }
+
+            async extractPDFText(file) {
+                // Simplified PDF text extraction
+                // In production, use proper PDF library
+                return `[PDF content from ${file.name}]\n\nThis is a placeholder for PDF text extraction.\nIn production, this would contain the actual extracted text from the PDF.`;
+            }
+
+            getFileIcon(mimeType) {
+                if (mimeType.includes('pdf')) return 'pdf';
+                if (mimeType.includes('word')) return 'word';
+                return 'alt';
+            }
+        }
+
+        // Initialize on page load
+        const docUI = new DocumentUI();
+        document.addEventListener('DOMContentLoaded', () => {
+            docUI.initialize();
+        });
+    </script>
+</body>
+</html>

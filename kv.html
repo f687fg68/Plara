@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plara - Key-Value Store (Puter KV)</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* KV Page specific styles */
+    .kv-container{max-width:1000px;margin:24px auto;padding:0 16px}
+    .kv-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .kv-title{font-family:'Playfair Display',serif;font-size:28px}
+    .kv-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+    .kv-tab{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);cursor:pointer}
+    .kv-tab.active{background:linear-gradient(135deg,#2563eb33,#10b98133);border-color:rgba(37,99,235,0.4)}
+    .kv-sections{margin-top:12px}
+    .kv-section{display:none}
+    .kv-section.active{display:block}
+    .kv-actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+    .kv-run{padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);cursor:pointer}
+    .kv-run:hover{background:rgba(255,255,255,0.12)}
+    .kv-form-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+    .kv-form-row input{min-width:260px}
+    .kv-log{margin-top:12px;padding:10px;border-radius:8px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.12);max-height:260px;overflow:auto;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;font-size:13px;line-height:1.45}
+    .kv-code{white-space:pre-wrap;color:#cbd5e1}
+  </style>
+</head>
+<body>
+  <nav class="top-navbar">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor" />
+        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span class="logo-text">plara</span>
+    </div>
+  </nav>
+
+  <main class="kv-container">
+    <div class="kv-header">
+      <div class="kv-title">Key-Value Store (Puter KV)</div>
+      <div class="kv-actions">
+        <button id="btnClearLog" class="kv-run">Clear Log</button>
+        <button id="btnShowLimits" class="kv-run">Show Limits</button>
+      </div>
+    </div>
+
+    <div class="kv-tabs" id="kvTabs">
+      <button class="kv-tab active" data-section="set">Set</button>
+      <button class="kv-tab" data-section="get">Get</button>
+      <button class="kv-tab" data-section="incr">Increment</button>
+      <button class="kv-tab" data-section="decr">Decrement</button>
+      <button class="kv-tab" data-section="del">Delete</button>
+      <button class="kv-tab" data-section="list">List</button>
+      <button class="kv-tab" data-section="flush">Flush</button>
+      <button class="kv-tab" data-section="expire">Expire</button>
+      <button class="kv-tab" data-section="expireAt">ExpireAt</button>
+    </div>
+
+    <div class="kv-sections">
+      <section class="kv-section active" id="sec-set">
+        <div class="kv-form-row">
+          <input id="set-key" placeholder="Key e.g. name" />
+          <input id="set-value" placeholder="Value (string/number/boolean/JSON) e.g. Puter Smith" />
+          <input id="set-expireAt" type="number" placeholder="expireAt timestamp (optional)" />
+        </div>
+        <div class="kv-actions">
+          <button id="run-set" class="kv-run">Set</button>
+        </div>
+        <div class="kv-code">await puter.kv.set(key, value[, expireAt])</div>
+      </section>
+
+      <section class="kv-section" id="sec-get">
+        <div class="kv-form-row">
+          <input id="get-key" placeholder="Key e.g. name" />
+        </div>
+        <div class="kv-actions">
+          <button id="run-get" class="kv-run">Get</button>
+        </div>
+        <div class="kv-code">const value = await puter.kv.get(key)</div>
+      </section>
+
+      <section class="kv-section" id="sec-incr">
+        <div class="kv-form-row">
+          <input id="incr-key" placeholder="Key e.g. counter" />
+          <input id="incr-amount" type="number" placeholder="Amount (default 1)" />
+          <input id="incr-path" placeholder="Nested path (optional) e.g. user.score" />
+        </div>
+        <div class="kv-actions">
+          <button id="run-incr" class="kv-run">Increment</button>
+        </div>
+        <div class="kv-code">await puter.kv.incr(key[, amount|{"path":amount}])</div>
+      </section>
+
+      <section class="kv-section" id="sec-decr">
+        <div class="kv-form-row">
+          <input id="decr-key" placeholder="Key e.g. counter" />
+          <input id="decr-amount" type="number" placeholder="Amount (default 1)" />
+          <input id="decr-path" placeholder="Nested path (optional) e.g. user.score" />
+        </div>
+        <div class="kv-actions">
+          <button id="run-decr" class="kv-run">Decrement</button>
+        </div>
+        <div class="kv-code">await puter.kv.decr(key[, amount|{"path":amount}])</div>
+      </section>
+
+      <section class="kv-section" id="sec-del">
+        <div class="kv-form-row">
+          <input id="del-key" placeholder="Key e.g. name" />
+        </div>
+        <div class="kv-actions">
+          <button id="run-del" class="kv-run">Delete</button>
+        </div>
+        <div class="kv-code">await puter.kv.del(key)</div>
+      </section>
+
+      <section class="kv-section" id="sec-list">
+        <div class="kv-form-row">
+          <input id="list-pattern" placeholder="Pattern (optional) e.g. user* or *" />
+          <label><input type="checkbox" id="list-returnValues" /> returnValues</label>
+        </div>
+        <div class="kv-actions">
+          <button id="run-list" class="kv-run">List</button>
+        </div>
+        <div class="kv-code">await puter.kv.list([pattern[, returnValues]])</div>
+      </section>
+
+      <section class="kv-section" id="sec-flush">
+        <div class="kv-actions">
+          <button id="run-flush" class="kv-run">Flush</button>
+        </div>
+        <div class="kv-code">await puter.kv.flush()</div>
+      </section>
+
+      <section class="kv-section" id="sec-expire">
+        <div class="kv-form-row">
+          <input id="expire-key" placeholder="Key e.g. name" />
+          <input id="expire-ttl" type="number" placeholder="TTL seconds e.g. 60" />
+        </div>
+        <div class="kv-actions">
+          <button id="run-expire" class="kv-run">Expire (TTL)</button>
+        </div>
+        <div class="kv-code">await puter.kv.expire(key, ttlSeconds)</div>
+      </section>
+
+      <section class="kv-section" id="sec-expireAt">
+        <div class="kv-form-row">
+          <input id="expireAt-key" placeholder="Key e.g. name" />
+          <input id="expireAt-ts" type="number" placeholder="Unix timestamp seconds e.g. now/1000+60" />
+        </div>
+        <div class="kv-actions">
+          <button id="run-expireAt" class="kv-run">ExpireAt (Timestamp)</button>
+        </div>
+        <div class="kv-code">await puter.kv.expireAt(key, timestampSeconds)</div>
+      </section>
+    </div>
+
+    <div class="kv-log" id="kvLog"></div>
+  </main>
+
+  <script src="https://js.puter.com/v2/"></script>
+  <script src="kv.js"></script>
+</body>
+</html>

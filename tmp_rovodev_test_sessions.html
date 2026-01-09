@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Management Test</title>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            background: rgba(255,255,255,0.1);
+            padding: 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        button { 
+            margin: 8px; 
+            padding: 12px 24px; 
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        button:hover { 
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #fbbf24;
+        }
+        .test-result { 
+            margin: 12px 0; 
+            padding: 12px; 
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .success { border-left: 4px solid #10b981; }
+        .error { border-left: 4px solid #ef4444; }
+        .info { border-left: 4px solid #3b82f6; }
+        .warning { border-left: 4px solid #f59e0b; }
+        #testResults {
+            max-height: 600px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .session-preview {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 3px solid #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Session Management Test Suite</h1>
+        <p>Testing session creation, history, and persistence</p>
+        
+        <div class="test-section">
+            <h3>📝 Create Test Sessions</h3>
+            <button onclick="createTestSessions()">Create 5 Test Sessions</button>
+            <button onclick="createSingleSession()">Create Single Session</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 List & Manage Sessions</h3>
+            <button onclick="listAllSessions()">List All Sessions</button>
+            <button onclick="getCurrentSession()">Get Current Session</button>
+            <button onclick="getSessionCount()">Count Sessions</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔄 Load & Switch Sessions</h3>
+            <button onclick="loadFirstSession()">Load First Session</button>
+            <button onclick="loadLastSession()">Load Last Session</button>
+            <button onclick="switchSessions()">Test Session Switching</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🗑️ Delete Sessions</h3>
+            <button onclick="deleteOldestSession()">Delete Oldest Session</button>
+            <button onclick="deleteAllSessions()">Delete All Sessions</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚀 Run Tests</h3>
+            <button onclick="runAllTests()" style="background: linear-gradient(135deg, #10b981, #3b82f6); font-size: 16px;">▶️ Run All Tests</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
+        
+        <div id="testResults"></div>
+    </div>
+    
+    <script src="https://js.puter.com/v2/"></script>
+    <script src="puter-kv-integration.js"></script>
+    
+    <script>
+        const resultsDiv = document.getElementById('testResults');
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            resultsDiv.appendChild(div);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+        
+        function clearResults() {
+            resultsDiv.innerHTML = '';
+        }
+        
+        // Simulate popupChatHistory
+        window.popupChatHistory = [];
+        window.currentConversationId = 'conv_' + Date.now();
+        
+        async function createTestSessions() {
+            log('📝 Creating 5 test sessions...', 'info');
+            
+            try {
+                for (let i = 1; i <= 5; i++) {
+                    const sessionId = `conv_test_${Date.now()}_${i}`;
+                    const messages = [
+                        { role: 'user', content: `Test message ${i} from user` },
+                        { role: 'assistant', content: `Test response ${i} from assistant. This is session number ${i}.` },
+                        { role: 'user', content: `Follow-up question ${i}` },
+                        { role: 'assistant', content: `Follow-up answer ${i}. Testing the session management system.` }
+                    ];
+                    
+                    await window.puterKV.saveChatHistory(sessionId, messages);
+                    log(`✅ Created session ${i}: ${sessionId}`, 'success');
+                    
+                    // Small delay between creations
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                
+                log('✅ All 5 test sessions created', 'success');
+            } catch (error) {
+                log(`❌ Failed to create test sessions: ${error.message}`, 'error');
+            }
+        }
+        
+        async function createSingleSession() {
+            log('📝 Creating single test session...', 'info');
+            
+            try {
+                const sessionId = `conv_single_${Date.now()}`;
+                const messages = [
+                    { role: 'user', content: 'Hello! This is a single test session.' },
+                    { role: 'assistant', content: 'Hi! This session was created for testing purposes.' }
+                ];
+                
+                await window.puterKV.saveChatHistory(sessionId, messages);
+                log(`✅ Created session: ${sessionId}`, 'success');
+                log(`Messages: ${messages.length}`, 'info');
+            } catch (error) {
+                log(`❌ Failed to create session: ${error.message}`, 'error');
+            }
+        }
+        
+        async function listAllSessions() {
+            log('📋 Listing all sessions...', 'info');
+            
+            try {
+                const sessions = await window.puterKV.listChatConversations();
+                
+                log(`✅ Found ${sessions.length} sessions`, 'success');
+                
+                sessions.forEach((session, index) => {
+                    const date = new Date(session.timestamp);
+                    const dateStr = date.toLocaleString();
+                    
+                    log(`
+                        <div class="session-preview">
+                            <strong>${index + 1}. ${session.id}</strong><br>
+                            📅 ${dateStr}<br>
+                            💬 ${session.messageCount} messages<br>
+                            📝 Preview: "${session.preview}"
+                        </div>
+                    `, 'info');
+                });
+                
+                if (sessions.length === 0) {
+                    log('No sessions found. Create some test sessions first!', 'warning');
+                }
+            } catch (error) {
+                log(`❌ Failed to list sessions: ${error.message}`, 'error');
+            }
+        }
+        
+        async function getCurrentSession() {
+            log('🔍 Getting current session...', 'info');
+            
+            try {
+                const sessionState = await window.puterKV.loadSessionState();
+                
+                if (sessionState) {
+                    log(`✅ Current session: ${sessionState.conversationId}`, 'success');
+                    log(`Timestamp: ${new Date(sessionState.timestamp).toLocaleString()}`, 'info');
+                    
+                    // Load chat history
+                    const history = await window.puterKV.loadChatHistory(sessionState.conversationId);
+                    log(`Chat history: ${history.length} messages`, 'info');
+                } else {
+                    log('⚠️ No current session found', 'warning');
+                }
+            } catch (error) {
+                log(`❌ Failed to get current session: ${error.message}`, 'error');
+            }
+        }
+        
+        async function getSessionCount() {
+            log('🔢 Counting sessions...', 'info');
+            
+            try {
+                const sessions = await window.puterKV.listChatConversations();
+                log(`✅ Total sessions: ${sessions.length}`, 'success');
+                
+                const totalMessages = sessions.reduce((sum, s) => sum + s.messageCount, 0);
+                log(`Total messages across all sessions: ${totalMessages}`, 'info');
+            } catch (error) {
+                log(`❌ Failed to count sessions: ${error.message}`, 'error');
+            }
+        }
+        
+        async function loadFirstSession() {
+            log('📂 Loading first session...', 'info');
+            
+            try {
+                const sessions = await window.puterKV.listChatConversations();
+                
+                if (sessions.length === 0) {
+                    log('⚠️ No sessions to load', 'warning');
+                    return;
+                }
+                
+                const firstSession = sessions[0];
+                const history = await window.puterKV.loadChatHistory(firstSession.id);
+                
+                log(`✅ Loaded session: ${firstSession.id}`, 'success');
+                log(`Messages loaded: ${history.length}`, 'info');
+                
+                // Update current session
+                await window.puterKV.saveSessionState({
+                    conversationId: firstSession.id,
+                    timestamp: Date.now()
+                });
+                
+                log('Session set as current', 'info');
+            } catch (error) {
+                log(`❌ Failed to load first session: ${error.message}`, 'error');
+            }
+        }
+        
+        async function loadLastSession() {
+            log('📂 Loading last session...', 'info');
+            
+            try {
+                const sessions = await window.puterKV.listChatConversations();
+                
+                if (sessions.length === 0) {
+                    log('⚠️ No sessions to load', 'warning');
+                    return;
+                }
+                
+                const lastSession = sessions[sessions.length - 1];
+                const history = await window.puterKV.loadChatHistory(lastSession.id);
+                
+                log(`✅ Loaded session: ${lastSession.id}`, 'success');
+                log(`Messages loaded: ${history.length}`, 'info');
+                
+                // Update current session
+                await window.puterKV.saveSessionState({
+                    conversationId: lastSession.id,
+                    timestamp: Date.now()
+                });
+                
+                log('Session set as current', 'info');
+            } catch (error) {
+                log(`❌ Failed to load last session: ${error.message}`, 'error');
+            }
+        }
+        
+        async function switchSessions() {
+            log('🔄 Testing session switching...', 'info');
+            
+            try {
+                const sessions = await window.puterKV.listChatConversations();
+                
+                if (sessions.length < 2) {
+                    log('⚠️ Need at least 2 sessions to test switching', 'warning');
+                    return;
+                }
+                
+                // Switch to first session
+                log(`Switching to: ${sessions[0].id}`, 'info');
+                await window.puterKV.saveSessionState({
+                    conversationId: sessions[0].id,
+                    timestamp: Date.now()
+                });
+                await new Promise(r => setTimeout(r, 500));
+                
+                // Switch to second session
+                log(`Switching to: ${sessions[1].id}`, 'info');
+                await window.puterKV.saveSessionState({
+                    conversationId: sessions[1].id,
+                    timestamp: Date.now()
+                });
+                
+                log('✅ Session switching test completed', 'success');
+            } catch (error) {
+                log(`❌ Session switching failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function deleteOldestSession() {
+            log('🗑️ Deleting oldest session...', 'info');
+            
+            try {
+                const sessions = await window.puterKV.listChatConversations();
+                
+                if (sessions.length === 0) {
+                    log('⚠️ No sessions to delete', 'warning');
+                    return;
+                }
+                
+                // Oldest is at the end after sorting by newest first
+                const oldestSession = sessions[sessions.length - 1];
+                
+                await window.puterKV.deleteChatHistory(oldestSession.id);
+                log(`✅ Deleted session: ${oldestSession.id}`, 'success');
+            } catch (error) {
+                log(`❌ Failed to delete session: ${error.message}`, 'error');
+            }
+        }
+        
+        async function deleteAllSessions() {
+            const confirmed = confirm('Delete ALL test sessions? This cannot be undone.');
+            if (!confirmed) return;
+            
+            log('🗑️ Deleting all sessions...', 'info');
+            
+            try {
+                const sessions = await window.puterKV.listChatConversations();
+                
+                for (const session of sessions) {
+                    await window.puterKV.deleteChatHistory(session.id);
+                    log(`Deleted: ${session.id}`, 'info');
+                }
+                
+                log(`✅ Deleted ${sessions.length} sessions`, 'success');
+            } catch (error) {
+                log(`❌ Failed to delete sessions: ${error.message}`, 'error');
+            }
+        }
+        
+        async function runAllTests() {
+            clearResults();
+            log('🚀 Running all tests...', 'info');
+            log('═'.repeat(80), 'info');
+            
+            await createTestSessions();
+            await new Promise(r => setTimeout(r, 1000));
+            
+            await listAllSessions();
+            await new Promise(r => setTimeout(r, 1000));
+            
+            await getSessionCount();
+            await new Promise(r => setTimeout(r, 1000));
+            
+            await getCurrentSession();
+            await new Promise(r => setTimeout(r, 1000));
+            
+            await loadFirstSession();
+            await new Promise(r => setTimeout(r, 1000));
+            
+            await switchSessions();
+            await new Promise(r => setTimeout(r, 1000));
+            
+            log('═'.repeat(80), 'info');
+            log('✅ All tests completed!', 'success');
+            log('💡 Check the main app (index.html) to see session buttons in action', 'info');
+        }
+        
+        // Auto-check if KV is ready
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.puterKV && window.puterKV.isInitialized) {
+                    log('✅ PuterKV is ready', 'success');
+                    log('Click "Run All Tests" to start testing', 'info');
+                } else {
+                    log('⚠️ PuterKV not initialized. Waiting...', 'warning');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
